@@ -10,23 +10,27 @@ public class Alert {
 		this.alpaca = alpaca;
 	}
 
-	// If current Latitude or Longitude is outside of the boundary, return True.
-	// Need to update so that it displays which direction is out of bounds.
-	public static Boolean outsideBoundary(float latCurrent, float lonCurrent) {
-		if (latCurrent > Settings.getLatMax()
-				|| latCurrent < Settings.getLatMin()
-				|| lonCurrent > Settings.getLonMax()
-				|| lonCurrent < Settings.getLonMin()) {
-			return true;
+	// If current Latitude or Longitude is outside of the boundary, print alert!
+	public static String outsideBoundary(float latCurrent, float lonCurrent) {
+		Settings.getBoundaries();
+		if (latCurrent > Settings.getLatMax()) {
+			return "Too far North!";
+		} else if (latCurrent < Settings.getLatMin()) {
+			return "Too far South!";
+		} else if (lonCurrent > Settings.getLonMax()) {
+			return "Too far East!";
+		} else if (lonCurrent < Settings.getLonMin()) {
+			return "Too far West!";
 		} else {
-			return false;
+			return "";
 		}
 	}
+
 
 	public void boundaryAlert() {
-		if (outsideBoundary(alpaca.getLatitudeDecimalDegrees(), alpaca.getLongitudeDecimalDegrees())) {
-			System.out.println("Alpaca out of bounds!");
+		String response = outsideBoundary(alpaca.getLatitudeDecimalDegrees(), alpaca.getLongitudeDecimalDegrees());
+		if (!response.equals("")) {
+			System.out.println("Alpaca out of bounds! " + response);
 		}
 	}
-
 }
