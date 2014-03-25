@@ -19,12 +19,12 @@ public class MotionRunnable implements Runnable {
 			// For now, the alpaca just moves in a straight line northwest
 			previousLatitude = currentLatitude;
 			previousLongitude = currentLongitude;
-			currentLatitude += 0.01;
-			currentLongitude += 0.01;
+			currentLatitude += 0.001;
+			currentLongitude += 0.001;
 			
 			// Sleep because the alpaca doesn't move as fast as the processor
 			try {
-				Thread.sleep(100);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				break;
 			}
