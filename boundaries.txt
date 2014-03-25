@@ -1,0 +1,4 @@
+latMax:45.0500
+latMin:44.9500
+lonMax:68.0500
+lonMin:67.9500
