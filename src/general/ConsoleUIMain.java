@@ -1,6 +1,5 @@
 package general;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,8 +14,9 @@ public class ConsoleUIMain {
 		
 		// Create a single alpaca and an Alert for it
 		AlpacaDataSimulator alpacaSim = AlpacaDataSimulator.createInstance();
-		Settings.getBoundaries(); // read boundaries from file
-		final Alert alert = new Alert(alpacaSim);
+		Settings settings = new SettingsImpl();
+		settings.getBoundaries(); // read boundaries from file
+		final Alert alert = new Alert(alpacaSim, settings);
 		
 		// Print the available commands for the user's reference
 		printConsoleCommands();
@@ -37,17 +37,13 @@ public class ConsoleUIMain {
 					exit = true;
 				}
 				else if (userInput.toLowerCase().equals("set-boundaries")){
-					try {
-						Settings.setBoundaries();
-					} catch (IOException e) {
-						System.out.println("Error setting boundaries");
-					}
+					settings.setBoundaries();
 				} 
 				else if (userInput.toLowerCase().equals("show-boundaries")){
-					System.out.println("Max latitude: "+Settings.getLatMax());
-					System.out.println("Min latitude: "+Settings.getLatMin());
-					System.out.println("Max longitude: "+Settings.getLonMax());
-					System.out.println("Min longitude: "+Settings.getLonMin());
+					System.out.println("Max latitude: "+settings.getLatMax());
+					System.out.println("Min latitude: "+settings.getLatMin());
+					System.out.println("Max longitude: "+settings.getLonMax());
+					System.out.println("Min longitude: "+settings.getLonMin());
 				}
 				else if (userInput.toLowerCase().equals("alpaca-location")){
 					System.out.println("Latitude: "+alpacaSim.getLatitudeDecimalDegrees());
