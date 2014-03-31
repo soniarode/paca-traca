@@ -123,4 +123,14 @@ public class SettingsImpl implements Settings{
 	public int getNumCorners() {
 		return Number_of_Corners;
 	}
+
+	@Override
+	public void setLatArray(float[] latArray) {
+		this.latArray = latArray;
+	}
+
+	@Override
+	public void setLonArray(float[] lonArray) {
+		this.lonArray = lonArray;
+	}
 }

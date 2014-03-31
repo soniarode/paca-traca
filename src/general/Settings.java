@@ -14,7 +14,10 @@ public interface Settings {
 	public float[] getLonArray();
 	
 	public int getNumCorners();
-
+	
+	public void setLatArray(float[] latArray);
+	
+	public void setLonArray(float[] lonArray);
 
 	public void setLatMax(float latMax);
 
