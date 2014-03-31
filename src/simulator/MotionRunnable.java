@@ -13,6 +13,7 @@ import java.util.Random;
 public class MotionRunnable implements Runnable {
 	
 	public static final int MAX_MILLIS_BETWEEN_LOCATION_CHANGE = 3100;
+	public static final float ALPACA_STEP_UNIT_GPS_DEGREES = 0.0001f;
 	
 	private volatile float currentLatitude;
 	private volatile float currentLongitude;
@@ -51,11 +52,19 @@ public class MotionRunnable implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			// For now, the alpaca just moves in a straight line northwest
+			// Randomly change the alpaca's direction by dividing the step unit
+			// size between the x and y directions.
+			double angleToMove = Math.PI*2 * random.nextDouble();
+			double deltaX = Math.cos(angleToMove)*ALPACA_STEP_UNIT_GPS_DEGREES;
+			double deltaY = Math.sin(angleToMove)*ALPACA_STEP_UNIT_GPS_DEGREES;
+			
+			// Update the alpaca's location
 			previousLatitude = currentLatitude;
 			previousLongitude = currentLongitude;
-			currentLatitude += 0.0001;
-			currentLongitude += 0.0001;
+			currentLatitude += deltaX;
+			currentLongitude += deltaY;
+			//currentLatitude += 0.0001;
+			//currentLongitude += 0.0001;
 			
 			// Randomly change the alpaca's speed
 			changeSpeedWithProbability(speedChangeProbability);
