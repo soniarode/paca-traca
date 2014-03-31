@@ -1,5 +1,13 @@
 package simulator;
 
+/**
+ * 
+ * @author Sonia Rode
+ *
+ * Generates latitude and longitude locations for an alpaca
+ * using simulated movement.
+ * 
+ */
 public class MotionRunnable implements Runnable {
 	
 	private volatile float currentLatitude;
@@ -7,10 +15,20 @@ public class MotionRunnable implements Runnable {
 	private volatile float previousLatitude;
 	private volatile float previousLongitude;
 	
+	/**
+	 * 
+	 * @param startLatitude the starting latitude of the alpaca
+	 * @param startLongitude the starting longitude of the alpaca
+	 */
+	public MotionRunnable(float startLatitude, float startLongitude){
+		currentLatitude = startLatitude;
+		currentLongitude = startLongitude;
+	}
+	
 	public MotionRunnable(){
-		// Set initial position of alpaca
-		currentLatitude = 45.0f;
-		currentLongitude = 68.0f;
+		// Set hard-coded initial position of alpaca
+		currentLatitude = 45.000000000f;
+		currentLongitude = 68.000000000f;
 	}
 
 	@Override
@@ -19,8 +37,8 @@ public class MotionRunnable implements Runnable {
 			// For now, the alpaca just moves in a straight line northwest
 			previousLatitude = currentLatitude;
 			previousLongitude = currentLongitude;
-			currentLatitude += 0.001;
-			currentLongitude += 0.001;
+			currentLatitude += 0.0001;
+			currentLongitude += 0.0001;
 			
 			// Sleep because the alpaca doesn't move as fast as the processor
 			try {

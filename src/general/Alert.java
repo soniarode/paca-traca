@@ -1,13 +1,13 @@
 package general;
 
-import simulator.AlpacaDataSimulator;
+import simulator.PacaTraca;
 
 public class Alert {
 
-	private AlpacaDataSimulator alpaca;
+	private PacaTraca alpaca;
 	private Settings settings;
 
-	public Alert(AlpacaDataSimulator alpaca, Settings settings) {
+	public Alert(PacaTraca alpaca, Settings settings) {
 		this.alpaca = alpaca;
 		this.settings = settings;
 	}
@@ -72,9 +72,9 @@ public class Alert {
 		*/
 		if ( !OutsideBoundary(alpaca.getLatitudeDecimalDegrees(),alpaca.getLongitudeDecimalDegrees()) )
 		{
-			System.out.println("Alpaca out of bounds!");
+			System.out.println("Alpaca "+alpaca.getSensorID()+" out of bounds!");
 		}
 		else
-			System.out.println("Alpaca is still Ok!");
+			System.out.println("Alpaca "+alpaca.getSensorID()+" is still Ok!");
 	}
 }

@@ -5,13 +5,17 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AlpacaDataSimulatorTest {
+public class EmulatedPacaTracaTest {
 	
-	AlpacaDataSimulator simulator;
+	public static final String SENSOR_ID = "Fluffy";
+	
+	EmulatedPacaTracaFactory factory;
+	PacaTraca simulator;
 
 	@Before
 	public void setUp() throws Exception {
-		simulator = AlpacaDataSimulator.createInstance();
+		factory = new EmulatedPacaTracaFactory();
+		simulator = factory.createPacaTraca(SENSOR_ID);
 	}
 
 	/*
@@ -21,7 +25,7 @@ public class AlpacaDataSimulatorTest {
 	public void getLatitudeAlpacaMovingTest() {
 		float latitude1 = simulator.getLatitudeDecimalDegrees();
 		try {
-			Thread.sleep(200);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -38,7 +42,7 @@ public class AlpacaDataSimulatorTest {
 	public void getLongitudeAlpacaMovingTest() {
 		float longitude1 = simulator.getLongitudeDecimalDegrees();
 		try {
-			Thread.sleep(200);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
