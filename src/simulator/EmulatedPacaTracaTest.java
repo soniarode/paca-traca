@@ -11,11 +11,13 @@ public class EmulatedPacaTracaTest {
 	
 	EmulatedPacaTracaFactory factory;
 	PacaTraca simulator;
+	PacaTraca simulatorSpeedShifter;
 
 	@Before
 	public void setUp() throws Exception {
 		factory = new EmulatedPacaTracaFactory();
 		simulator = factory.createPacaTraca(SENSOR_ID);
+		simulatorSpeedShifter = factory.createPacaTracaSpeedChange(SENSOR_ID);
 	}
 
 	/*
@@ -25,7 +27,7 @@ public class EmulatedPacaTracaTest {
 	public void getLatitudeAlpacaMovingTest() {
 		float latitude1 = simulator.getLatitudeDecimalDegrees();
 		try {
-			Thread.sleep(500);
+			Thread.sleep(MotionRunnable.MAX_MILLIS_BETWEEN_LOCATION_CHANGE);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -42,7 +44,7 @@ public class EmulatedPacaTracaTest {
 	public void getLongitudeAlpacaMovingTest() {
 		float longitude1 = simulator.getLongitudeDecimalDegrees();
 		try {
-			Thread.sleep(500);
+			Thread.sleep(MotionRunnable.MAX_MILLIS_BETWEEN_LOCATION_CHANGE);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -50,5 +52,25 @@ public class EmulatedPacaTracaTest {
 		
 		// The alpaca should have moved, so the longitude should have changed
 		assertTrue("Longitudes should be different", longitude1 != longitude2);
+	}
+	
+	/*
+	 * Test that the speed reading of the alpaca changes. Uses a simulator
+	 * where the alpaca changed its speed each time it moves.
+	 */
+	@Test
+	public void speedChangesTest() {
+		float speed1 = simulatorSpeedShifter.getSpeed();
+		System.out.println("First speed is "+speed1);
+		try {
+			Thread.sleep(MotionRunnable.MAX_MILLIS_BETWEEN_LOCATION_CHANGE);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		float speed2 = simulatorSpeedShifter.getSpeed();
+		System.out.println("Second speed is "+speed2);
+		
+		// The alpaca should have changed speed
+		assertTrue("Speeds should be different", speed1 != speed2);
 	}
 }

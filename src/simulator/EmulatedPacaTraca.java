@@ -1,5 +1,7 @@
 package simulator;
 
+import java.util.Random;
+
 /**
  * 
  * @author Sonia Rode
@@ -9,14 +11,24 @@ package simulator;
  * 
  */
 public class EmulatedPacaTraca implements PacaTraca {
-	
+
 	private String sensorID;
 	private MotionRunnable motionSimulator;
-	
+	private Random random; // used to randomize alpaca's behavior
+
 	public EmulatedPacaTraca(String sensorID){
 		this.sensorID = sensorID;
-		this.motionSimulator = new MotionRunnable();
+		this.random = new Random();
+		this.motionSimulator = new MotionRunnable(random);
 		new Thread(this.motionSimulator).start();
+	}
+
+	/*
+	 * Constructor for unit tests only
+	 */
+	public EmulatedPacaTraca(String sensorID, double speedChangeProbability){
+		this(sensorID);
+		motionSimulator.setSpeedChangeProbability(speedChangeProbability);
 	}
 
 	@Override
@@ -31,8 +43,13 @@ public class EmulatedPacaTraca implements PacaTraca {
 
 	@Override
 	public Float getSpeed() {
-		// TODO real implementation
-		return new Float(10.0);
+		// TODO this method should return speed in feet per second,
+		// but right now it's degrees per millisecond. Fix.
+		float distanceGPS = Math.abs(motionSimulator.getCurrentLatitude() - 
+				motionSimulator.getPreviousLatitude())
+				+ Math.abs(motionSimulator.getCurrentLongitude() - 
+						motionSimulator.getPreviousLongitude());
+		return distanceGPS/motionSimulator.getMillisBetweenMeasurements();
 	}
 
 	@Override
@@ -44,19 +61,19 @@ public class EmulatedPacaTraca implements PacaTraca {
 	@Override
 	public Float getAltitude() {
 		// TODO real implementation
-				return new Float(10.0);
+		return new Float(10.0);
 	}
 
 	@Override
 	public Integer getNumSatellites() {
 		// TODO real implementation
-				return new Integer(1);
+		return new Integer(1);
 	}
 
 	@Override
 	public Boolean haveFix() {
 		// TODO real implementation
-				return new Boolean(true);
+		return new Boolean(true);
 	}
 
 	@Override
