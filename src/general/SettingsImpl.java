@@ -6,7 +6,10 @@ public class SettingsImpl implements Settings{
 
 	// Boundaries in Latitude and longitude Maximum and Minimum
 	private float latMax, latMin, lonMax, lonMin;
-
+	// These are just temp values use for simple test, they should be stored and update from the settings file.
+	private float latArray[] = {0,5,5,0};
+	private float lonArray[] = {0,0,5,5};
+	private int Number_of_Corners = 4;
 	public SettingsImpl(){
 
 	}
@@ -108,5 +111,16 @@ public class SettingsImpl implements Settings{
 
 	public void setLonMin(float lonMin) {
 		this.lonMin = lonMin;
+	}
+
+	public float[] getLatArray() {
+		return latArray;
+	}
+
+	public float[] getLonArray() {
+		return lonArray;
+	}
+	public int getNumCorners() {
+		return Number_of_Corners;
 	}
 }

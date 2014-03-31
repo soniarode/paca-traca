@@ -1,4 +1,4 @@
-latMax:70.0
-latMin:6.0
-lonMax:68.05
-lonMin:40.0
+latMax:12.0
+latMin:2.0
+lonMax:12.0
+lonMin:2.0

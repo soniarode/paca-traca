@@ -2,9 +2,19 @@ package general;
 
 public interface Settings {
 
+
+	
 	public void getBoundaries();
 	public void setBoundaries();
 	public float getLatMax();
+	
+	
+	public float[] getLatArray();
+
+	public float[] getLonArray();
+	
+	public int getNumCorners();
+
 
 	public void setLatMax(float latMax);
 
