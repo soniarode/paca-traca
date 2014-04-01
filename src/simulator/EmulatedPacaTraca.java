@@ -54,8 +54,29 @@ public class EmulatedPacaTraca implements PacaTraca {
 
 	@Override
 	public Float getCourse() {
-		// TODO real implementation
-		return new Float(10.0);
+		float curLat = motionSimulator.getCurrentLatitude();
+		float curLon = motionSimulator.getCurrentLongitude();
+		float prevLat = motionSimulator.getPreviousLatitude();
+		float prevLon = motionSimulator.getPreviousLongitude();
+
+		float positiveAngleRadians = (float)Math.atan( Math.abs(curLat - prevLat) 
+				/ Math.abs(curLon - prevLon));
+
+		// Find radians to add to arctan result based on what quadrant the last
+		// move was in to
+		float radiansToAdd = 0; 
+		if (curLat - prevLat > 0){ // Q1 or Q4
+			if (curLon - prevLon > 0) // Q1
+				radiansToAdd = 0; 
+			else // Q4
+				radiansToAdd = 3.0f/2.0f * (float)Math.PI;
+		} else { // Q2 or Q3
+			if (curLon - prevLon > 0) // Q2
+				radiansToAdd = (float)Math.PI/2.0f;
+			else // Q3
+				radiansToAdd = (float)Math.PI;
+		}
+		return positiveAngleRadians + radiansToAdd;
 	}
 
 	@Override

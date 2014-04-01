@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import simulator.*;
 
 public class ConsoleUIMain {
+
+	private static final String indent = "   ";
 
 	Scanner console;
 	HashMap<String, Alert> alerts;
@@ -34,7 +37,7 @@ public class ConsoleUIMain {
 		System.out.println("paca-traca >>");
 		while (!exit){
 
-			boundaryAlerts(); // check if any alapcas are out of bounds
+			//boundaryAlerts(); // check if any alpacas are out of bounds
 
 			// Get user input
 			if (console.hasNext()){
@@ -45,8 +48,7 @@ public class ConsoleUIMain {
 				}
 				else if (userInput.toLowerCase().equals("set-boundaries")){
 					// The user should have entered the points like
-					// (1,2),(3,4),(5,6)...,(6,3)
-					// Whitespace is ok.
+					// (1,2),(3,4),(5,6)...,(6,3) with no whitespace!
 					String listOfPoints = console.next();
 					processBoundaryInputs(listOfPoints);
 					//settings.setBoundaries();
@@ -64,8 +66,20 @@ public class ConsoleUIMain {
 					//System.out.println("Max longitude: "+settings.getLonMax());
 					//set-System.out.println("Min longitude: "+settings.getLonMin());
 				}
-				else if (userInput.toLowerCase().equals("alpaca-location")){
-					printAlpacaLocation(console.next());
+				else if (userInput.toLowerCase().equals("list-alpacas")){
+					System.out.println("Sensor IDs:");
+					for (String id: pacaTracas.keySet()){
+						System.out.println(id);
+					}
+				}
+				else if (userInput.toLowerCase().equals("alpaca-data")){
+					printAllAlpacaData(console.next());
+				}
+				else if (userInput.toLowerCase().equals("alerts")){
+					boundaryAlerts(); // check if any alpacas are out of bounds
+				}
+				else if (userInput.toLowerCase().equals("help")){
+					printConsoleCommands();
 				}
 				else {
 					System.out.println("Invalid command "+userInput);
@@ -81,17 +95,50 @@ public class ConsoleUIMain {
 		}
 	}
 
-	private void printAlpacaLocation(String ID){
+	private void printAllAlpacaData(String ID){
+		if (pacaTracas.containsKey(ID)){
+			System.out.println(ID + ":");
+			printAlpacaLocation(ID, indent);
+			System.out.print(indent);
+			printAlpacaSpeed(ID);
+			System.out.print(indent);
+			printAlpacaHeading(ID);
+		} else {
+			System.out.println("Error: Invalid sensor ID");
+		}
+	}
+
+	private void printAlpacaHeading(String ID){
 		PacaTraca thePaca = pacaTracas.get(ID);
 		if (thePaca == null){
 			System.out.println("Error: Invalid sensor ID");
 		}
 		else {
-			System.out.println("Latitude: "+thePaca.getLatitudeDecimalDegrees());
-			System.out.println("Longitude: "+thePaca.getLongitudeDecimalDegrees());
+			System.out.println("Heading (radians): "+thePaca.getCourse());
 		}
 	}
-	
+
+	private void printAlpacaSpeed(String ID){
+		PacaTraca thePaca = pacaTracas.get(ID);
+		if (thePaca == null){
+			System.out.println("Error: Invalid sensor ID");
+		}
+		else {
+			System.out.println("Speed (degrees/millisecond): "+thePaca.getSpeed());
+		}
+	}
+
+	private void printAlpacaLocation(String ID, String prefix){
+		PacaTraca thePaca = pacaTracas.get(ID);
+		if (thePaca == null){
+			System.out.println("Error: Invalid sensor ID");
+		}
+		else {
+			System.out.println(prefix + "Latitude: "+thePaca.getLatitudeDecimalDegrees());
+			System.out.println(prefix + "Longitude: "+thePaca.getLongitudeDecimalDegrees());
+		}
+	}
+
 	/*
 	 * Parses the boundary points input entered by the user and sets
 	 * these in Settings. Prints error message on bad input.
@@ -123,9 +170,11 @@ public class ConsoleUIMain {
 
 	public static void printConsoleCommands(){
 		List<String> commands = new ArrayList<String>();
-		commands.add("set-boundaries (x1, y1),(x2, y2),...,(xn, yn)");
+		commands.add("set-boundaries (x1,y1),(x2,y2),...,(xn,yn)");
 		commands.add("show-boundaries");
-		commands.add("alpaca-location <sensor ID>");
+		commands.add("list-alpacas");
+		commands.add("alpaca-data <sensor ID>");
+		commands.add("alerts");
 		commands.add("exit");
 		System.out.println("Valid commands:");
 		for (String command: commands)
