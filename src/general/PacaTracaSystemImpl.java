@@ -4,12 +4,14 @@ import java.util.HashMap;
 
 import simulator.PacaTraca;
 import simulator.PacaTracaFactory;
+import db.DataUI;
 
 public class PacaTracaSystemImpl implements PacaTracaSystem {
 	
 	HashMap<String, PacaTraca> pacaTracas;
 	Settings settings;
 	HashMap<String, Alert> pacaTracaAlerts;
+	DataUI dataUI;
 	
 	public PacaTracaSystemImpl(PacaTracaFactory alpacaFactory, int numAlpacas){
 		
@@ -30,6 +32,8 @@ public class PacaTracaSystemImpl implements PacaTracaSystem {
 			PacaTraca pacaTracaForKey = pacaTracas.get(pacaID);
 			pacaTracaAlerts.put(pacaID, new Alert(pacaTracaForKey, settings));
 		}
+		
+		dataUI = new DataUI();
 	}
 
 	@Override

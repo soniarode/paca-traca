@@ -1,3 +1,4 @@
+package db;
 /*
  * Tried to create a simple UI, connect to DB and select/display some 
  * data into UI
@@ -36,10 +37,6 @@ public class DataUI implements ActionListener {
     JButton btn_First=new JButton("First");
     JButton btn_Last=new JButton("Last");
     
-    public static void main(String[] args)
-    {
-        new DataUI();
-    }
 
     public DataUI() {
         //initialize the connection to MySQL database
@@ -52,7 +49,10 @@ public class DataUI implements ActionListener {
         DisplayDataInUI();
     }
     
-
+    public Connection getDBconnection(){
+    	return CON;
+    }
+    
 
     private void ConnectToDB() {
         try
@@ -61,7 +61,7 @@ public class DataUI implements ActionListener {
             Class.forName("com.mysql.jdbc.Driver");
             // Create connection to DB, username and password stored in plain here
             // eventually we will make a config file
-            CON= DriverManager.getConnection("jdbc:mysql://localhost:3306/test","kemal","");
+            CON=  DriverManager.getConnection("jdbc:mysql://blah","blah","blah");
         }
         catch(Exception ex)
         {
@@ -75,7 +75,7 @@ public class DataUI implements ActionListener {
         {
             //create statement object, execute SQL on DB and getting the RS object back
             STA=CON.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-            String query="SELECT * FROM alpaca";
+            String query="SELECT * FROM alpaca_test";
             RES=STA.executeQuery(query);
             
         }
