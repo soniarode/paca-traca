@@ -27,11 +27,15 @@ public class DataUI implements ActionListener {
     JLabel lbl_ID;
     JLabel lbl_sensorID;
     JLabel lbl_name;
-    JLabel lbl_age;
+    JLabel lbl_age, lbl_gender;
+    JLabel lbl_lat, lbl_lon, lbl_speed, lbl_course, lbl_altitude, lbl_temp,
+    	lbl_pitch, lbl_roll;
     JTextField txt_ID;       
     JTextField txt_sensorID;    
     JTextField txt_name;   
-    JTextField txt_age;    
+    JTextField txt_age, txt_gender; 
+    JTextField txt_lat, txt_lon, txt_speed, txt_course, txt_altitude, txt_temp,
+    	txt_pitch, txt_roll;
     JButton btn_Next=new JButton("Next");
     JButton btn_Prev=new JButton("Prev");
     JButton btn_First=new JButton("First");
@@ -61,7 +65,7 @@ public class DataUI implements ActionListener {
             Class.forName("com.mysql.jdbc.Driver");
             // Create connection to DB, username and password stored in plain here
             // eventually we will make a config file
-            CON=  DriverManager.getConnection("jdbc:mysql://blah","blah","blah");
+            CON= DriverManager.getConnection("jdbc:mysql://blah","blah","blah");
         }
         catch(Exception ex)
         {
@@ -88,17 +92,10 @@ public class DataUI implements ActionListener {
     private void CreateUI() 
     {
         MainWindow=new JFrame();
-        MainWindow.setSize(700, 200);
+        MainWindow.setSize(640, 300);
         MainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        lbl_ID=new JLabel("Alpaca ID: ");
-        lbl_sensorID=new JLabel("Sensor ID: ");
-        lbl_name=new JLabel("Name: ");
-        lbl_age=new JLabel("Age: ");
-        
-        txt_ID=new JTextField(10);
-        txt_sensorID=new JTextField(10);
-        txt_name=new JTextField(10);
-        txt_age=new JTextField(10);
+        createUILabels();
+        createUITextFields();
         
         JPanel InfoPanel=new JPanel();
         InfoPanel.add(lbl_ID);
@@ -109,6 +106,24 @@ public class DataUI implements ActionListener {
         InfoPanel.add(txt_name);
         InfoPanel.add(lbl_age);
         InfoPanel.add(txt_age);
+        InfoPanel.add(lbl_gender);
+        InfoPanel.add(txt_gender);
+        InfoPanel.add(lbl_lat);
+        InfoPanel.add(txt_lat);
+        InfoPanel.add(lbl_lon);
+        InfoPanel.add(txt_lon);
+        InfoPanel.add(lbl_speed);
+        InfoPanel.add(txt_speed);
+        InfoPanel.add(lbl_course);
+        InfoPanel.add(txt_course);
+        InfoPanel.add(lbl_altitude);
+        InfoPanel.add(txt_altitude);
+        InfoPanel.add(lbl_temp);
+        InfoPanel.add(txt_temp);
+        InfoPanel.add(lbl_pitch);
+        InfoPanel.add(txt_pitch);
+        InfoPanel.add(lbl_roll);
+        InfoPanel.add(txt_roll);
         InfoPanel.add(btn_First);
         InfoPanel.add(btn_Prev);
         InfoPanel.add(btn_Next);
@@ -122,6 +137,38 @@ public class DataUI implements ActionListener {
         MainWindow.add(InfoPanel);
         MainWindow.setVisible(true);
 
+    }
+    
+    private void createUILabels(){
+        lbl_ID=new JLabel("Alpaca ID: ");
+        lbl_sensorID=new JLabel("Sensor ID: ");
+        lbl_name=new JLabel("Name: ");
+        lbl_age=new JLabel("Age: ");
+        lbl_gender = new JLabel("Gender: ");
+        lbl_lat =  new JLabel("Latitude: ");
+        lbl_lon =  new JLabel("Longitude: ");
+        lbl_speed = new JLabel("Speed: "); 
+        lbl_course  = new JLabel("Heading: "); 
+        lbl_altitude  = new JLabel("Altitude: "); 
+        lbl_temp  = new JLabel("Temperature: ");
+        lbl_pitch = new JLabel("Pitch: "); 
+        lbl_roll = new JLabel("Roll: ");
+    }
+    
+    private void createUITextFields(){
+        txt_ID=new JTextField(10);
+        txt_sensorID=new JTextField(10);
+        txt_name=new JTextField(10);
+        txt_age=new JTextField(10);
+        txt_gender=new JTextField(10);
+        txt_lat=new JTextField(10);
+        txt_lon=new JTextField(10); 
+        txt_speed=new JTextField(10); 
+        txt_course=new JTextField(10); 
+        txt_altitude=new JTextField(10); 
+        txt_temp=new JTextField(10);
+    	txt_pitch=new JTextField(10); 
+    	txt_roll=new JTextField(10);
     }
     
     private void DisplayDataInUI() 
