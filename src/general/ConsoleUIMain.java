@@ -103,6 +103,8 @@ public class ConsoleUIMain {
 			printAlpacaSpeed(ID);
 			System.out.print(indent);
 			printAlpacaHeading(ID);
+			System.out.println(indent + 
+					"Temperature: "+pacaTracas.get(ID).getTemperature());
 		} else {
 			System.out.println("Error: Invalid sensor ID");
 		}
@@ -114,7 +116,7 @@ public class ConsoleUIMain {
 			System.out.println("Error: Invalid sensor ID");
 		}
 		else {
-			System.out.println("Heading (radians): "+thePaca.getCourse());
+			System.out.println("Heading (degrees): "+thePaca.getCourse());
 		}
 	}
 
@@ -124,7 +126,7 @@ public class ConsoleUIMain {
 			System.out.println("Error: Invalid sensor ID");
 		}
 		else {
-			System.out.println("Speed (degrees/millisecond): "+thePaca.getSpeed());
+			System.out.println("Speed (feet/second): "+thePaca.getSpeed());
 		}
 	}
 

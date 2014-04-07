@@ -5,6 +5,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * 
+ * @author Sonia Rode
+ * 
+ * Unit tests for EmulatedPacaTraca
+ *
+ */
 public class EmulatedPacaTracaTest {
 	
 	public static final String SENSOR_ID = "Fluffy";
@@ -30,7 +37,8 @@ public class EmulatedPacaTracaTest {
 		float latitude2 = simulator.getLatitudeDecimalDegrees();
 		
 		// The alpaca should have moved, so the latitude should have changed
-		assertTrue("Latitudes should be different", latitude1 != latitude2);
+		assertTrue("Latitudes should be different", 
+				Math.abs(latitude1 - latitude2) > 0.000000000);
 	}
 
 	/*
@@ -43,7 +51,8 @@ public class EmulatedPacaTracaTest {
 		float longitude2 = simulator.getLatitudeDecimalDegrees();
 		
 		// The alpaca should have moved, so the longitude should have changed
-		assertTrue("Longitudes should be different", longitude1 != longitude2);
+		assertTrue("Longitudes should be different", 
+				Math.abs(longitude1 - longitude2) > 0.000000000);
 	}
 	
 	/*
@@ -68,23 +77,15 @@ public class EmulatedPacaTracaTest {
 	 */
 	@Test
 	public void directionChangesTest(){
-		float latitude1 = simulator.getLatitudeDecimalDegrees();
-		float longitude1 = simulator.getLongitudeDecimalDegrees();
+		float angleStep1 = simulator.getCourse();
+		System.out.println("First angle is "+angleStep1);
 		waitForAlpacaToMove();
-		float latitude2 = simulator.getLatitudeDecimalDegrees();
-		float longitude2 = simulator.getLongitudeDecimalDegrees();
-		double angleStep1Radians = Math.atan( Math.abs(latitude1 - latitude2)
-										/ Math.abs(longitude1 - longitude2));
-		System.out.println("First angle is "+angleStep1Radians);
-		waitForAlpacaToMove();
-		float latitude3 = simulator.getLatitudeDecimalDegrees();
-		float longitude3 = simulator.getLongitudeDecimalDegrees();
-		double angleStep2Radians = Math.atan( Math.abs(latitude2 - latitude3)
-				/ Math.abs(longitude2 - longitude3));
-		System.out.println("Second angle is "+angleStep2Radians);
+		
+		float angleStep2 = simulator.getCourse();
+		System.out.println("Second angle is "+angleStep2);
 		
 		// The angle of the two steps should be different
-		assertTrue("Angles should be different", angleStep1Radians != angleStep2Radians);
+		assertTrue("Angles should be different", angleStep1 != angleStep2);
 	}
 	
 	private void waitForAlpacaToMove(){

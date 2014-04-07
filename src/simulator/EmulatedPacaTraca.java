@@ -1,5 +1,6 @@
 package simulator;
 
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -11,72 +12,113 @@ import java.util.Random;
  * 
  */
 public class EmulatedPacaTraca implements PacaTraca {
+	
+	private static final int FEET_PER_LATITUDE_DEGREE = 364320;
+	private static final int RADIUS_OF_EARTH_FEET = 20925525;
 
 	private String sensorID;
 	private MotionRunnable motionSimulator;
-	private Random random; // used to randomize alpaca's behavior
+	private TemperatureRunnable temperatureSimulator;
+	private volatile Random random; // used to randomize alpaca's behavior
 
+	/*
+	 * Standard constructor
+	 */
 	public EmulatedPacaTraca(String sensorID){
 		this.sensorID = sensorID;
 		this.random = new Random();
 		this.motionSimulator = new MotionRunnable(random);
+		this.temperatureSimulator = new TemperatureRunnable(random);
 		new Thread(this.motionSimulator).start();
+		new Thread(this.temperatureSimulator).start();
 	}
 
 	/*
-	 * Constructor for unit tests only
+	 * The remaining constructors are for unit tests only
 	 */
+	
 	public EmulatedPacaTraca(String sensorID, double speedChangeProbability){
 		this(sensorID);
 		motionSimulator.setSpeedChangeProbability(speedChangeProbability);
 	}
+	
+	public EmulatedPacaTraca(String sensorID, 
+			Map<TemperatureRunnable.TemperatureEvent, Double> probabilities){
+		this.sensorID = sensorID;
+		this.random = new Random();
+		this.motionSimulator = new MotionRunnable(random);
+		this.temperatureSimulator = new TemperatureRunnable(random, probabilities);
+		new Thread(this.motionSimulator).start();
+		new Thread(this.temperatureSimulator).start();
+	}
 
 	@Override
 	public Float getLatitudeDecimalDegrees() {
-		return motionSimulator.getCurrentLatitude();
+		return (float)motionSimulator.getCurrentLatitude();
 	}
 
 	@Override
 	public Float getLongitudeDecimalDegrees() {
-		return motionSimulator.getCurrentLongitude();
+		return (float)motionSimulator.getCurrentLongitude();
 	}
 
 	@Override
 	public Float getSpeed() {
-		// TODO this method should return speed in feet per second,
-		// but right now it's degrees per millisecond. Fix.
-		float distanceGPS = Math.abs(motionSimulator.getCurrentLatitude() - 
-				motionSimulator.getPreviousLatitude())
-				+ Math.abs(motionSimulator.getCurrentLongitude() - 
-						motionSimulator.getPreviousLongitude());
-		return distanceGPS/motionSimulator.getMillisBetweenMeasurements();
+		// Convert latitude delta to feet
+		double curLat = motionSimulator.getCurrentLatitude();
+		double deltaLatDegrees = Math.abs(curLat - 
+				motionSimulator.getPreviousLatitude());
+		double deltaLatFeet = deltaLatDegrees*FEET_PER_LATITUDE_DEGREE;
+		
+		// Convert longitude delta to feet
+		double deltaLonDegrees = Math.abs(motionSimulator.getCurrentLongitude() - 
+				motionSimulator.getPreviousLongitude());
+		double feetPerLonDegree = Math.PI/180 * RADIUS_OF_EARTH_FEET * Math.cos(curLat);
+		double deltaLonFeet = deltaLonDegrees * feetPerLonDegree;
+		
+		// Find the hypotenuse == distance between previous and current location
+		float distance = (float)Math.sqrt(Math.pow(deltaLatFeet, 2) + 
+				Math.pow(deltaLonFeet, 2));
+		
+		// Divide by the number of seconds between measurements
+		return distance/(motionSimulator.getMillisBetweenMeasurements()/1000.0f);
+		
 	}
 
 	@Override
 	public Float getCourse() {
-		float curLat = motionSimulator.getCurrentLatitude();
-		float curLon = motionSimulator.getCurrentLongitude();
-		float prevLat = motionSimulator.getPreviousLatitude();
-		float prevLon = motionSimulator.getPreviousLongitude();
+		double curLat = motionSimulator.getCurrentLatitude();
+		double curLon = motionSimulator.getCurrentLongitude();
+		double prevLat = motionSimulator.getPreviousLatitude();
+		double prevLon = motionSimulator.getPreviousLongitude();
+		
+		// If the longitude delta is 0 we'll get a divide-by-zero; this means
+		// a heading straight north or south (90 or 270 degrees)
+		if (Math.abs(curLon - prevLon) < 0.000000000000000){
+			if (curLat > prevLat)
+				return 90.0f;
+			else
+				return 270.0f;
+		}
 
-		float positiveAngleRadians = (float)Math.atan( Math.abs(curLat - prevLat) 
-				/ Math.abs(curLon - prevLon));
+		float positiveAngleDegrees = (float)((180/Math.PI) * 
+				Math.atan(Math.abs(curLat - prevLat) / Math.abs(curLon - prevLon)));
 
-		// Find radians to add to arctan result based on what quadrant the last
+		// Find degrees to add to arctan result based on what quadrant the last
 		// move was in to
-		float radiansToAdd = 0; 
+		float degreesToAdd = 0; 
 		if (curLat - prevLat > 0){ // Q1 or Q4
 			if (curLon - prevLon > 0) // Q1
-				radiansToAdd = 0; 
+				degreesToAdd = 0; 
 			else // Q4
-				radiansToAdd = 3.0f/2.0f * (float)Math.PI;
+				degreesToAdd = 270; 
 		} else { // Q2 or Q3
 			if (curLon - prevLon > 0) // Q2
-				radiansToAdd = (float)Math.PI/2.0f;
+				degreesToAdd = 90;
 			else // Q3
-				radiansToAdd = (float)Math.PI;
+				degreesToAdd = 180;
 		}
-		return positiveAngleRadians + radiansToAdd;
+		return positiveAngleDegrees + degreesToAdd;
 	}
 
 	@Override
@@ -105,8 +147,7 @@ public class EmulatedPacaTraca implements PacaTraca {
 
 	@Override
 	public Float getTemperature() {
-		// TODO real implementation
-		return new Float(10.0);
+		return temperatureSimulator.getTemperature();
 	}
 
 	@Override

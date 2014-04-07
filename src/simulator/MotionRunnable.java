@@ -13,13 +13,13 @@ import java.util.Random;
 public class MotionRunnable implements Runnable {
 	
 	public static final int MAX_MILLIS_BETWEEN_LOCATION_CHANGE = 3100;
-	public static final float ALPACA_STEP_UNIT_GPS_DEGREES = 0.0001f;
+	public static final double ALPACA_STEP_UNIT_GPS_DEGREES = 0.000005;
 	
-	private volatile float currentLatitude;
-	private volatile float currentLongitude;
-	private volatile float previousLatitude;
-	private volatile float previousLongitude;
-	private Random random;
+	private volatile double currentLatitude;
+	private volatile double currentLongitude;
+	private volatile double previousLatitude;
+	private volatile double previousLongitude;
+	private volatile Random random;
 	private int millisBetweenLocationChange;
 	private double speedChangeProbability;
 	
@@ -61,13 +61,11 @@ public class MotionRunnable implements Runnable {
 			// Update the alpaca's location
 			previousLatitude = currentLatitude;
 			previousLongitude = currentLongitude;
-			currentLatitude += deltaX;
-			currentLongitude += deltaY;
-			//currentLatitude += 0.0001;
-			//currentLongitude += 0.0001;
+			currentLatitude += deltaY;
+			currentLongitude += deltaX;
 			
 			// Randomly change the alpaca's speed
-			changeSpeedWithProbability(speedChangeProbability);
+			//changeSpeedWithProbability(speedChangeProbability);
 			
 			// Sleep because the alpaca doesn't move as fast as the processor
 			try {
@@ -78,19 +76,19 @@ public class MotionRunnable implements Runnable {
 		}
 	}
 
-	public float getCurrentLatitude() {
+	public double getCurrentLatitude() {
 		return currentLatitude;
 	}
 
-	public float getCurrentLongitude() {
+	public double getCurrentLongitude() {
 		return currentLongitude;
 	}
 
-	public float getPreviousLatitude() {
+	public double getPreviousLatitude() {
 		return previousLatitude;
 	}
 
-	public float getPreviousLongitude() {
+	public double getPreviousLongitude() {
 		return previousLongitude;
 	}
 	
