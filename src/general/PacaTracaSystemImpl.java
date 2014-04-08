@@ -1,10 +1,12 @@
 package general;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import simulator.PacaTraca;
 import simulator.PacaTracaFactory;
 import db.DataUI;
+import db.UIUpdater;
 
 public class PacaTracaSystemImpl implements PacaTracaSystem {
 	
@@ -12,6 +14,7 @@ public class PacaTracaSystemImpl implements PacaTracaSystem {
 	Settings settings;
 	HashMap<String, Alert> pacaTracaAlerts;
 	DataUI dataUI;
+	UIUpdater uiUpdater;
 	
 	public PacaTracaSystemImpl(PacaTracaFactory alpacaFactory, int numAlpacas){
 		
@@ -33,7 +36,10 @@ public class PacaTracaSystemImpl implements PacaTracaSystem {
 			pacaTracaAlerts.put(pacaID, new Alert(pacaTracaForKey, settings));
 		}
 		
-		dataUI = new DataUI();
+		dataUI = new DataUI(new ArrayList<String>(pacaTracas.keySet()));
+		uiUpdater = new UIUpdater(dataUI, pacaTracas);
+		Thread uiUpdateThread = new Thread(uiUpdater);
+		uiUpdateThread.start();
 	}
 
 	@Override

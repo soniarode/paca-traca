@@ -14,6 +14,7 @@ import java.sql.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 
 public class DataUI implements ActionListener {
 
@@ -21,6 +22,8 @@ public class DataUI implements ActionListener {
 	Connection CON;
 	Statement STA;
 	ResultSet RES;
+	List<String> sensorIDs;
+	int currentSensorIndex;
 
 	// define UI global variables
 
@@ -42,7 +45,8 @@ public class DataUI implements ActionListener {
 	JButton btn_First = new JButton("First");
 	JButton btn_Last = new JButton("Last");
 
-	public DataUI() {
+	public DataUI(List<String> sensorIDs) {
+		this.sensorIDs = sensorIDs;
 		// initialize the connection to MySQL database
 		ConnectToDB();
 		// create statement, execute SQL query against the DB and obtain
@@ -52,11 +56,15 @@ public class DataUI implements ActionListener {
 		// navigating through returned ResultSet)
 		CreateUI();
 		// Bind the fields from DB to our GUI
-		DisplayDataInUI();
+		//DisplayDataInUI();
 	}
 
 	public Connection getDBconnection() {
 		return CON;
+	}
+	
+	public String getCurrentSensorID(){
+		return sensorIDs.get(currentSensorIndex);
 	}
 
 	private void ConnectToDB() {
@@ -199,37 +207,47 @@ public class DataUI implements ActionListener {
 	}
 
 	public void btn_Next_Action() {
-		try {
-			if (RES.next()) {
-				txt_ID.setText(RES.getString("ID"));
-				txt_sensorID.setText(RES.getString("Sensor_ID"));
-				txt_name.setText(RES.getString("Name"));
-				txt_age.setText(RES.getString("Age"));
-			} else {
-				RES.previous();
-				JOptionPane.showMessageDialog(null, "This is the last record!");
-			}
-		} catch (Exception ex) {
-			System.out.println(ex);
+		if (currentSensorIndex == sensorIDs.size()-1){
+			currentSensorIndex = 0;
+		} else {
+			currentSensorIndex++;
 		}
+//		try {
+//			if (RES.next()) {
+//				txt_ID.setText(RES.getString("ID"));
+//				txt_sensorID.setText(RES.getString("Sensor_ID"));
+//				txt_name.setText(RES.getString("Name"));
+//				txt_age.setText(RES.getString("Age"));
+//			} else {
+//				RES.previous();
+//				JOptionPane.showMessageDialog(null, "This is the last record!");
+//			}
+//		} catch (Exception ex) {
+//			System.out.println(ex);
+//		}
 
 	}
 
 	public void btn_Prev_Action() {
-		try {
-			if (RES.previous()) {
-				txt_ID.setText(RES.getString("ID"));
-				txt_sensorID.setText(RES.getString("Sensor_ID"));
-				txt_name.setText(RES.getString("Name"));
-				txt_age.setText(RES.getString("Age"));
-			} else {
-				RES.next();
-				JOptionPane
-						.showMessageDialog(null, "This is the first record!");
-			}
-		} catch (Exception ex) {
-			System.out.println(ex);
+		if (currentSensorIndex == 0){
+			currentSensorIndex = sensorIDs.size()-1;
+		} else {
+			currentSensorIndex--;
 		}
+//		try {
+//			if (RES.previous()) {
+//				txt_ID.setText(RES.getString("ID"));
+//				txt_sensorID.setText(RES.getString("Sensor_ID"));
+//				txt_name.setText(RES.getString("Name"));
+//				txt_age.setText(RES.getString("Age"));
+//			} else {
+//				RES.next();
+//				JOptionPane
+//						.showMessageDialog(null, "This is the first record!");
+//			}
+//		} catch (Exception ex) {
+//			System.out.println(ex);
+//		}
 	}
 
 	public void btn_First_Action() {
