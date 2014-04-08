@@ -37,10 +37,10 @@ public class EmulatedPacaTraca implements PacaTraca {
 	 * The remaining constructors are for unit tests only
 	 */
 	
-	public EmulatedPacaTraca(String sensorID, double speedChangeProbability){
-		this(sensorID);
-		motionSimulator.setSpeedChangeProbability(speedChangeProbability);
-	}
+//	public EmulatedPacaTraca(String sensorID, double speedChangeProbability){
+//		this(sensorID);
+//		motionSimulator.setSpeedChangeProbability(speedChangeProbability);
+//	}
 	
 	public EmulatedPacaTraca(String sensorID, 
 			Map<TemperatureRunnable.TemperatureEvent, Double> probabilities){
@@ -81,7 +81,12 @@ public class EmulatedPacaTraca implements PacaTraca {
 				Math.pow(deltaLonFeet, 2));
 		
 		// Divide by the number of seconds between measurements
-		return distance/(motionSimulator.getMillisBetweenMeasurements()/1000.0f);
+		float speed = distance/(motionSimulator.getMillisBetweenMeasurements()/1000.0f);
+		
+		// If the speed is below 0.000001 it's just 0
+		if (speed < 0.00001)
+			return 0f;
+		return speed;
 		
 	}
 
@@ -123,8 +128,7 @@ public class EmulatedPacaTraca implements PacaTraca {
 
 	@Override
 	public Float getAltitude() {
-		// TODO real implementation
-		return new Float(10.0);
+		return (float)motionSimulator.getAltitude();
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package simulator;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -11,18 +14,50 @@ import java.util.Random;
  * 
  */
 public class MotionRunnable implements Runnable {
-	
-	public static final int MAX_MILLIS_BETWEEN_LOCATION_CHANGE = 3100;
-	public static final double ALPACA_STEP_UNIT_GPS_DEGREES = 0.000005;
-	
+
+	public static final int THREAD_SLEEP_TIME_MILLIS = 500;
+	public static final double ALPACA_STEP_UNIT_GPS_DEGREES = 0.000001;
+
+	private static final double MIN_ALTITUDE_WHILE_GRAZING = 49.5;
+	private static final double MAX_ALTITUDE_WHILE_GRAZING = 50;
+	private static final double STANDARD_ALTITUDE = 50;
+
+	enum MotionEvent{
+		MOVE_NORMAL,
+		GRAZE,
+		MOVE_FAR,
+		STAND_STILL,
+		LIE_STILL;	
+	}
+
+	enum GrazeStatus{
+		LOWERING_HEAD, 
+		LIFTING_HEAD;
+	}
+
+	private static Map<MotionEvent, Double> eventProbabilities;
+	static {
+		Map<MotionEvent, Double> map = new HashMap<MotionEvent, Double>();
+		map.put(MotionEvent.MOVE_NORMAL, 0.40);
+		map.put(MotionEvent.GRAZE, 0.40);
+		map.put(MotionEvent.MOVE_FAR, 0.05);
+		map.put(MotionEvent.STAND_STILL, 0.10);
+		map.put(MotionEvent.LIE_STILL, 0.05);
+		eventProbabilities = Collections.unmodifiableMap(map);
+	}
+
+	private MotionEvent currentEvent;
+	private int countdownToNextEvent;
+	private double heading;
+	private double altitude;
+	private GrazeStatus grazeStatus;
+	private int stepUnitMultiplier;
 	private volatile double currentLatitude;
 	private volatile double currentLongitude;
 	private volatile double previousLatitude;
 	private volatile double previousLongitude;
 	private volatile Random random;
-	private int millisBetweenLocationChange;
-	private double speedChangeProbability;
-	
+
 	/**
 	 * 
 	 * @param startLatitude the starting latitude of the alpaca
@@ -33,18 +68,15 @@ public class MotionRunnable implements Runnable {
 			Random random){
 		currentLatitude = startLatitude;
 		currentLongitude = startLongitude;
+		altitude = STANDARD_ALTITUDE;
 		this.random = random;
-		millisBetweenLocationChange = 500; // initially the alpaca changes
-		                                   // its location every .5 seconds
-		speedChangeProbability = 0.5; // the alpaca changes it's speed half the
-									  // time it moves
 	}
-	
+
 	public MotionRunnable(Random random){
 		// Set hard-coded initial position of alpaca
 		this(45.000000000f, 68.000000000f, random);
 	}
-	
+
 	public MotionRunnable(){
 		this(new Random());
 	}
@@ -52,24 +84,37 @@ public class MotionRunnable implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			// Randomly change the alpaca's direction by dividing the step unit
-			// size between the x and y directions.
-			double angleToMove = Math.PI*2 * random.nextDouble();
-			double deltaX = Math.cos(angleToMove)*ALPACA_STEP_UNIT_GPS_DEGREES;
-			double deltaY = Math.sin(angleToMove)*ALPACA_STEP_UNIT_GPS_DEGREES;
-			
-			// Update the alpaca's location
-			previousLatitude = currentLatitude;
-			previousLongitude = currentLongitude;
-			currentLatitude += deltaY;
-			currentLongitude += deltaX;
-			
-			// Randomly change the alpaca's speed
-			//changeSpeedWithProbability(speedChangeProbability);
-			
+			if (countdownToNextEvent <= 0){
+				currentEvent = chooseEvent();
+			}
+			countdownToNextEvent--;
+			switch(currentEvent)
+			{
+			case MOVE_NORMAL:
+				move();
+				break;
+			case GRAZE:
+				graze();
+				break;
+			case MOVE_FAR:
+				move();
+				break;
+			case STAND_STILL: // do nothing
+				break;
+			case LIE_STILL: // do nothing
+				break;
+			default:
+				break;
+			}
+			try {
+				Thread.sleep(THREAD_SLEEP_TIME_MILLIS);
+			} catch (InterruptedException e) {
+				break;
+			}
+
 			// Sleep because the alpaca doesn't move as fast as the processor
 			try {
-				Thread.sleep(millisBetweenLocationChange);
+				Thread.sleep(THREAD_SLEEP_TIME_MILLIS);
 			} catch (InterruptedException e) {
 				break;
 			}
@@ -91,24 +136,99 @@ public class MotionRunnable implements Runnable {
 	public double getPreviousLongitude() {
 		return previousLongitude;
 	}
-	
+
 	public int getMillisBetweenMeasurements(){
-		return millisBetweenLocationChange;
+		return THREAD_SLEEP_TIME_MILLIS;
 	}
 	
+	public double getAltitude(){
+		return altitude;
+	}
+
 	/*
-	 * Sets the probability that the alpaca's speed will change at a
-	 * time step.
+	 *  Use event probabilities to randomly choose an event
 	 */
-	public void setSpeedChangeProbability(double probability){
-		speedChangeProbability = probability;
+	private MotionEvent chooseEvent(){
+		
+		double dice = random.nextDouble();
+
+		if (dice < eventProbabilities.get(MotionEvent.MOVE_NORMAL)){
+			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
+			heading = random.nextDouble() * Math.PI*2;
+			altitude = STANDARD_ALTITUDE;
+			stepUnitMultiplier = MathUtils.randomIntBetween(1, 10, random);
+			return MotionEvent.MOVE_NORMAL;
+		} 
+		else if (dice < (eventProbabilities.get(MotionEvent.MOVE_NORMAL) +
+				eventProbabilities.get(MotionEvent.GRAZE))){
+			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
+			altitude = STANDARD_ALTITUDE;
+			grazeStatus = GrazeStatus.LOWERING_HEAD;
+			return MotionEvent.GRAZE;
+		}
+		else if (dice < (eventProbabilities.get(MotionEvent.MOVE_NORMAL) +
+				eventProbabilities.get(MotionEvent.GRAZE) +
+				eventProbabilities.get(MotionEvent.MOVE_FAR))){
+			countdownToNextEvent = MathUtils.randomIntBetween(20, 100, random);
+			heading = random.nextDouble() * Math.PI*2;
+			altitude = STANDARD_ALTITUDE;
+			stepUnitMultiplier = MathUtils.randomIntBetween(1, 10, random);
+			return MotionEvent.MOVE_FAR;
+		}
+		else if (dice < (eventProbabilities.get(MotionEvent.MOVE_NORMAL) +
+				eventProbabilities.get(MotionEvent.GRAZE) +
+				eventProbabilities.get(MotionEvent.MOVE_FAR) +
+				eventProbabilities.get(MotionEvent.STAND_STILL))){
+			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
+			altitude = STANDARD_ALTITUDE;
+			return MotionEvent.STAND_STILL;
+		}
+		else if (dice < (eventProbabilities.get(MotionEvent.MOVE_NORMAL) +
+				eventProbabilities.get(MotionEvent.GRAZE) +
+				eventProbabilities.get(MotionEvent.MOVE_FAR) +
+				eventProbabilities.get(MotionEvent.STAND_STILL) +
+				eventProbabilities.get(MotionEvent.LIE_STILL))){
+			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
+			altitude = STANDARD_ALTITUDE - 3;
+			return MotionEvent.LIE_STILL;
+		}
+		countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
+		altitude = STANDARD_ALTITUDE;
+		return MotionEvent.STAND_STILL;
 	}
-	
-	private void changeSpeedWithProbability(double probability){
-		if (random.nextDouble() < probability){
-			// Change speed; pick some value in [100, 3100] millis between
-			// location change
-			millisBetweenLocationChange = 100 + random.nextInt(3000);
+
+	/*
+	 * Updates the latitude and longitude of the alpaca using the current
+	 * heading and the stepUnitMultiplier (affects speed)
+	 */
+	private void move(){
+		previousLatitude = currentLatitude;
+		previousLongitude = currentLongitude;
+		currentLatitude += Math.sin(heading)*
+				ALPACA_STEP_UNIT_GPS_DEGREES*stepUnitMultiplier;
+		currentLongitude += Math.cos(heading)*
+				ALPACA_STEP_UNIT_GPS_DEGREES*stepUnitMultiplier;
+	}
+
+	/*
+	 * Changes the alpaca's altitude reading in an up and down motion
+	 * meant to mimic grazing
+	 */
+	private void graze(){
+		// Update whether the alpaca's collar is lifting or lowering
+		if (altitude <= MIN_ALTITUDE_WHILE_GRAZING){
+			grazeStatus = GrazeStatus.LIFTING_HEAD;
+		}
+		else if (altitude >= MAX_ALTITUDE_WHILE_GRAZING){
+			grazeStatus = GrazeStatus.LOWERING_HEAD;
+		}
+
+		// Change the altitude reading accordingly
+		if (grazeStatus == GrazeStatus.LOWERING_HEAD){
+			altitude -= 0.1;
+		}
+		else {
+			altitude += 0.1;
 		}
 	}
 

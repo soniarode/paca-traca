@@ -24,7 +24,7 @@ public class EmulatedPacaTracaTest {
 	public void setUp() throws Exception {
 		factory = new EmulatedPacaTracaFactory();
 		simulator = factory.createPacaTraca(SENSOR_ID);
-		simulatorSpeedShifter = factory.createPacaTracaSpeedChange(SENSOR_ID);
+		//simulatorSpeedShifter = factory.createPacaTracaSpeedChange(SENSOR_ID);
 	}
 
 	/*
@@ -32,6 +32,9 @@ public class EmulatedPacaTracaTest {
 	 */
 	@Test
 	public void getLatitudeAlpacaMovingTest() {
+		
+		fail("Need EmulatedPacaTraca that always moves; "
+				+ "not yet implemented in factory");
 		float latitude1 = simulator.getLatitudeDecimalDegrees();
 		waitForAlpacaToMove();
 		float latitude2 = simulator.getLatitudeDecimalDegrees();
@@ -46,6 +49,9 @@ public class EmulatedPacaTracaTest {
 	 */
 	@Test
 	public void getLongitudeAlpacaMovingTest() {
+		
+		fail("Need EmulatedPacaTraca that always moves; "
+				+ "not yet implemented in factory");
 		float longitude1 = simulator.getLongitudeDecimalDegrees();
 		waitForAlpacaToMove();
 		float longitude2 = simulator.getLatitudeDecimalDegrees();
@@ -61,10 +67,13 @@ public class EmulatedPacaTracaTest {
 	 */
 	@Test
 	public void speedChangesTest() {
-		float speed1 = simulatorSpeedShifter.getSpeed();
+		
+		fail("Need EmulatedPacaTraca that always changes speed; "
+				+ "not yet implemented in factory");
+		float speed1 = simulator.getSpeed();
 		System.out.println("First speed is "+speed1);
 		waitForAlpacaToMove();
-		float speed2 = simulatorSpeedShifter.getSpeed();
+		float speed2 = simulator.getSpeed();
 		System.out.println("Second speed is "+speed2);
 		
 		// The alpaca should have changed speed
@@ -77,6 +86,9 @@ public class EmulatedPacaTracaTest {
 	 */
 	@Test
 	public void directionChangesTest(){
+		
+		fail("Need EmulatedPacaTraca that always changes heading; "
+				+ "not yet implemented in factory");
 		float angleStep1 = simulator.getCourse();
 		System.out.println("First angle is "+angleStep1);
 		waitForAlpacaToMove();
@@ -90,7 +102,7 @@ public class EmulatedPacaTracaTest {
 	
 	private void waitForAlpacaToMove(){
 		try {
-			Thread.sleep(MotionRunnable.MAX_MILLIS_BETWEEN_LOCATION_CHANGE);
+			Thread.sleep(MotionRunnable.THREAD_SLEEP_TIME_MILLIS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

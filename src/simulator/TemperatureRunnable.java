@@ -97,7 +97,7 @@ public class TemperatureRunnable implements Runnable {
 		double dice = random.nextDouble();
 		
 		if (dice < eventProbabilities.get(TemperatureEvent.SLOW_FEVER)){
-			countdownToNextEvent = randomIntBetween(10, 500);
+			countdownToNextEvent = MathUtils.randomIntBetween(10, 50, random);
 			return TemperatureEvent.SLOW_FEVER;
 		} 
 		else if (dice < (eventProbabilities.get(TemperatureEvent.SLOW_FEVER) +
@@ -108,7 +108,7 @@ public class TemperatureRunnable implements Runnable {
 		else if (dice < (eventProbabilities.get(TemperatureEvent.SLOW_FEVER) +
 						eventProbabilities.get(TemperatureEvent.SUDDEN_FEVER) +
 						eventProbabilities.get(TemperatureEvent.SLOW_CHILL))){
-			countdownToNextEvent = randomIntBetween(10, 500);
+			countdownToNextEvent = MathUtils.randomIntBetween(10, 50, random);
 			return TemperatureEvent.SLOW_CHILL;
 		}
 		else if (dice < (eventProbabilities.get(TemperatureEvent.SLOW_FEVER) +
@@ -118,14 +118,8 @@ public class TemperatureRunnable implements Runnable {
 			countdownToNextEvent = 1;
 			return TemperatureEvent.SUDDEN_CHILL;
 		}
-		countdownToNextEvent = randomIntBetween(10, 500);
+		countdownToNextEvent = MathUtils.randomIntBetween(10, 50, random);
 		return TemperatureEvent.STEADY_TEMP;
-	}
-	
-	private int randomIntBetween(int startInclusive, int endExclusive){
-		if (startInclusive >= endExclusive)
-			throw new IllegalArgumentException("Start must be greater than end!");
-		return startInclusive + random.nextInt(endExclusive - startInclusive);
 	}
 
 }

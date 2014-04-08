@@ -16,9 +16,9 @@ public class EmulatedPacaTracaFactory implements PacaTracaFactory {
 	/*
 	 * Creates an EmulatedPacaTraca that changes it's speed every time it moves.
 	 */
-	public PacaTraca createPacaTracaSpeedChange(String sensorID) {
-		return new EmulatedPacaTraca(sensorID, 1);
-	}
+//	public PacaTraca createPacaTracaSpeedChange(String sensorID) {
+//		return new EmulatedPacaTraca(sensorID, 1);
+//	}
 	
 	public PacaTraca createPacaTracaSlowTemperatureDrop(String sensorID) {
 		// TODO this is unfinished
