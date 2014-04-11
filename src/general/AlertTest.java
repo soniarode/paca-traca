@@ -8,7 +8,7 @@ import org.junit.Test;
 import simulator.PacaTraca;
 
 /**
- * @author Zachery Schiller Unit tests for EmulatedPacaTraca
+ * @author Zachery Schiller Unit tests for Alert Class
  */
 
 public class AlertTest {
@@ -19,43 +19,60 @@ public class AlertTest {
 
 	@Before
 	public void setUp() throws Exception {
+		// Need to create an alpaca to change settings on for test
+		settings = new SettingsImpl();
+		float[] latitudes = { 44.9f, 44.925f, 44.9f, 44.925f };
+		settings.setLatArray(latitudes);
+		float[] longitudes = { -68.66f, -68.66f, -68.68f, -68.68f };
+		settings.setLonArray(longitudes);
 		alertTest = new Alert(alpaca, settings);
 	}
 
 	@Test
+	public void testInsideBoundary() {
+		/*
+		 * Test that a point within specified boundaries returns in bounds.
+		 */
+		assertTrue("Should be in bounds",
+				alertTest.OutsideBoundary(44.9125f, -68.67f));
+	}
+
+	@Test
 	public void testOutsideBoundary() {
-		float latitude_Values[] = settings.getLatArray();
-		float longitude_Values[] = settings.getLonArray();
-		int num_Corners = settings.getNumCorners();
-
 		/*
-		 * Test that there are more than two boundary points
+		 * Test that a point within specified boundaries returns in bounds.
 		 */
-		assertTrue("Should be more than 2 boundary points", num_Corners > 2);
+		assertFalse("Should be out of bounds",
+				alertTest.OutsideBoundary(48.1f, -70.2f));
+	}
 
-		float testLatIn = latitude_Values[0];
-		float testLonIn = longitude_Values[0];
-
+	@Test
+	public void testHighTemperature() {
 		/*
-		 * Test that each of the boundary values are within lat and lon
+		 * Test that a high temperature returns high from test
 		 */
-		for (int i = 1; i < num_Corners; i++) {
-			assertTrue("Latitude and longitude should be within -90 and 90",
-					((latitude_Values[i]) > -90.000000000)
-							&& (latitude_Values[i]) < 90.000000000
-							&& (longitude_Values[i]) > -90.000000000
-							&& (longitude_Values[i]) < 90.000000000);
-			testLatIn = testLatIn + latitude_Values[i];
-			testLonIn = testLonIn + longitude_Values[i];
-		}
+		// Need to set temperature above 102.5f
+		assertTrue("Should return high temperature",
+				alertTest.temperatureAlert() == "high");
+	}
 
-		testLatIn = testLatIn / num_Corners;
-		testLonIn = testLonIn / num_Corners;
-
+	@Test
+	public void testLowTemperature() {
 		/*
-		 * Test that a point found by averaging boundaries is within boundaries
+		 * Test that a low temperature returns low from test
 		 */
-		assertTrue("Average of boundaries should be in bounds.",
-				(alertTest.OutsideBoundary(testLatIn, testLonIn)) == true);
+		// Need to set temperature below 100.5f
+		assertTrue("Should return low temperature",
+				alertTest.temperatureAlert() == "low");
+	}
+
+	@Test
+	public void testNormalTemperature() {
+		/*
+		 * Test that a normal temperature returns normal from test
+		 */
+		// Need to set temperature in-between 100.5f and 102.5f
+		assertTrue("Should return normal temperature",
+				alertTest.temperatureAlert() == "normal");
 	}
 }

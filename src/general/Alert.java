@@ -80,4 +80,21 @@ public class Alert {
 			System.out.println("Alpaca " + alpaca.getSensorID()
 					+ " is still Ok!");
 	}
+
+	public String temperatureAlert() {
+		/*
+		 * Gets the current temperature of the alpaca and returns a string with
+		 * an alert of whether the alpaca is too hot, too cold or just right.
+		 */
+		String s;
+		if (alpaca.getTemperature() > 102.5f) {
+			s = ("Alpaca " + alpaca.getSensorID() + " temperature is too hot!");
+		} else if (alpaca.getTemperature() < 100.5f) {
+			s = ("Alpaca " + alpaca.getSensorID() + " temperature is too cold!");
+		} else {
+			s = ("Alpaca " + alpaca.getSensorID() + " temperature is normal!");
+		}
+		return s;
+	}
+
 }
