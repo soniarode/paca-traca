@@ -1,9 +1,8 @@
 package simulator;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Random;
+
 
 /**
  * 
@@ -14,7 +13,7 @@ import java.util.Random;
  */
 public class TemperatureRunnable implements Runnable {
 	
-	private static final int THREAD_SLEEP_TIME_MILLIS = 500;
+	public static final int THREAD_SLEEP_TIME_MILLIS = 500;
 
 	enum TemperatureEvent{
 		SLOW_FEVER,
@@ -24,15 +23,14 @@ public class TemperatureRunnable implements Runnable {
 		STEADY_TEMP;	
 	}
 	
-	private static Map<TemperatureEvent, Double> eventProbabilities;
+	private static LinkedHashMap<TemperatureEvent, Double> eventProbabilities;
 	static {
-        Map<TemperatureEvent, Double> map = new HashMap<TemperatureEvent, Double>();
-        map.put(TemperatureEvent.SLOW_FEVER, 0.20);
-        map.put(TemperatureEvent.SUDDEN_FEVER, 0.15);
-        map.put(TemperatureEvent.SLOW_CHILL, 0.20);
-        map.put(TemperatureEvent.SUDDEN_CHILL, 0.15);
-        map.put(TemperatureEvent.STEADY_TEMP, 0.30);
-        eventProbabilities = Collections.unmodifiableMap(map);
+		eventProbabilities = new LinkedHashMap<TemperatureEvent, Double>();
+		eventProbabilities.put(TemperatureEvent.SLOW_FEVER, 0.20);
+		eventProbabilities.put(TemperatureEvent.SUDDEN_FEVER, 0.15);
+		eventProbabilities.put(TemperatureEvent.SLOW_CHILL, 0.20);
+		eventProbabilities.put(TemperatureEvent.SUDDEN_CHILL, 0.15);
+		eventProbabilities.put(TemperatureEvent.STEADY_TEMP, 0.30);
     }
 
 	private TemperatureEvent currentEvent;
@@ -40,25 +38,32 @@ public class TemperatureRunnable implements Runnable {
 	private volatile float temperature;
 	private volatile Random random;
 
+	/**
+	 * Creates a new TemperatureRunnable
+	 * @param random used to randomize the alpaca's temperature behavior.
+	 */
 	public TemperatureRunnable(Random random){
 		this.random = random;
 		temperature = 100.4f;
 		countdownToNextEvent = 0;
 	}
 	
-	/*
-	 * Constructor for unit tests only
+	/**
+	 * Creates a new TemperatureRunnable with the given event probabilities.
+	 * @param random used to randomize the alpaca's temperature behavior
+	 * @param probs the probabilities to use for each TemperatureEvent
 	 */
-	public TemperatureRunnable(Random random, Map<TemperatureEvent, Double> probs){
+	public TemperatureRunnable(Random random, LinkedHashMap<TemperatureEvent, Double> probs){
 		this(random);
-		eventProbabilities = probs;	
+		if (probs != null)
+			eventProbabilities = probs;
 	}
 
 	@Override
 	public void run() {
 		while (true){
 			if (countdownToNextEvent <= 0){
-				currentEvent = chooseEvent();
+				currentEvent = chooseEventAndSetup();
 			}
 			countdownToNextEvent--;
 			switch(currentEvent)
@@ -92,34 +97,34 @@ public class TemperatureRunnable implements Runnable {
 		return temperature;
 	}
 
-	private TemperatureEvent chooseEvent(){
-		// Use event probabilities to randomly choose an event
-		double dice = random.nextDouble();
+	/*
+	 *  Use event probabilities to randomly choose an event, and set variables
+	 *  for the event
+	 */
+	private TemperatureEvent chooseEventAndSetup(){
+
+		TemperatureEvent chosenEvent = 
+				MathUtils.chooseEventForProbability(random.nextDouble(), 
+						eventProbabilities);
+		switch(chosenEvent){
 		
-		if (dice < eventProbabilities.get(TemperatureEvent.SLOW_FEVER)){
+		case SLOW_FEVER:
 			countdownToNextEvent = MathUtils.randomIntBetween(10, 50, random);
-			return TemperatureEvent.SLOW_FEVER;
-		} 
-		else if (dice < (eventProbabilities.get(TemperatureEvent.SLOW_FEVER) +
-						eventProbabilities.get(TemperatureEvent.SUDDEN_FEVER))){
+			break;
+		case SUDDEN_FEVER:
 			countdownToNextEvent = 1;
-			return TemperatureEvent.SUDDEN_FEVER;
-		}
-		else if (dice < (eventProbabilities.get(TemperatureEvent.SLOW_FEVER) +
-						eventProbabilities.get(TemperatureEvent.SUDDEN_FEVER) +
-						eventProbabilities.get(TemperatureEvent.SLOW_CHILL))){
+			break;
+		case SLOW_CHILL:
 			countdownToNextEvent = MathUtils.randomIntBetween(10, 50, random);
-			return TemperatureEvent.SLOW_CHILL;
-		}
-		else if (dice < (eventProbabilities.get(TemperatureEvent.SLOW_FEVER) +
-				eventProbabilities.get(TemperatureEvent.SUDDEN_FEVER) +
-				eventProbabilities.get(TemperatureEvent.SLOW_CHILL) +
-				eventProbabilities.get(TemperatureEvent.SUDDEN_CHILL))){
+			break;
+		case SUDDEN_CHILL:
 			countdownToNextEvent = 1;
-			return TemperatureEvent.SUDDEN_CHILL;
+			break;
+		case STEADY_TEMP:
+			countdownToNextEvent = MathUtils.randomIntBetween(10, 50, random);
+			break;
 		}
-		countdownToNextEvent = MathUtils.randomIntBetween(10, 50, random);
-		return TemperatureEvent.STEADY_TEMP;
+		return chosenEvent;
 	}
 
 }

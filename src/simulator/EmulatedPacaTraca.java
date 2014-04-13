@@ -1,6 +1,6 @@
 package simulator;
 
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Random;
 
 /**
@@ -34,23 +34,19 @@ public class EmulatedPacaTraca implements PacaTraca {
 	}
 
 	/*
-	 * The remaining constructors are for unit tests only
+	 * Constructor where event probabilities are specified
 	 */
-	
-//	public EmulatedPacaTraca(String sensorID, double speedChangeProbability){
-//		this(sensorID);
-//		motionSimulator.setSpeedChangeProbability(speedChangeProbability);
-//	}
-	
 	public EmulatedPacaTraca(String sensorID, 
-			Map<TemperatureRunnable.TemperatureEvent, Double> probabilities){
+			LinkedHashMap<TemperatureRunnable.TemperatureEvent, Double> tempProbabilities,
+			LinkedHashMap<MotionRunnable.MotionEvent, Double> motionProbabilities){
 		this.sensorID = sensorID;
 		this.random = new Random();
-		this.motionSimulator = new MotionRunnable(random);
-		this.temperatureSimulator = new TemperatureRunnable(random, probabilities);
+		this.motionSimulator = new MotionRunnable(random, motionProbabilities);
+		this.temperatureSimulator = new TemperatureRunnable(random, tempProbabilities);
 		new Thread(this.motionSimulator).start();
 		new Thread(this.temperatureSimulator).start();
 	}
+
 
 	@Override
 	public Float getLatitudeDecimalDegrees() {
@@ -82,10 +78,7 @@ public class EmulatedPacaTraca implements PacaTraca {
 		
 		// Divide by the number of seconds between measurements
 		float speed = distance/(motionSimulator.getMillisBetweenMeasurements()/1000.0f);
-		
-		// If the speed is below 0.000001 it's just 0
-		if (speed < 0.00001)
-			return 0f;
+
 		return speed;
 		
 	}

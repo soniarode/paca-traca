@@ -9,7 +9,8 @@ import org.junit.Test;
  * 
  * @author Sonia Rode
  * 
- * Unit tests for EmulatedPacaTraca
+ * Unit tests for EmulatedPacaTraca.
+ * Indirectly tests MotionRunnable and TemperatureRunnable.
  *
  */
 public class EmulatedPacaTracaTest {
@@ -23,86 +24,151 @@ public class EmulatedPacaTracaTest {
 	@Before
 	public void setUp() throws Exception {
 		factory = new EmulatedPacaTracaFactory();
-		simulator = factory.createPacaTraca(SENSOR_ID);
-		//simulatorSpeedShifter = factory.createPacaTracaSpeedChange(SENSOR_ID);
 	}
 
 	/*
-	 * Test that the latitude reading changed when the alpaca is moving
+	 * Test that either the latitude or longitude reading changed when the 
+	 * alpaca is moving
 	 */
 	@Test
-	public void getLatitudeAlpacaMovingTest() {
+	public void testLatLonChangesWhileMoving() {
 		
-		fail("Need EmulatedPacaTraca that always moves; "
-				+ "not yet implemented in factory");
+		simulator = factory.createPacaTracaMoveNormalOnly(SENSOR_ID);
 		float latitude1 = simulator.getLatitudeDecimalDegrees();
-		waitForAlpacaToMove();
-		float latitude2 = simulator.getLatitudeDecimalDegrees();
-		
-		// The alpaca should have moved, so the latitude should have changed
-		assertTrue("Latitudes should be different", 
-				Math.abs(latitude1 - latitude2) > 0.000000000);
-	}
-
-	/*
-	 * Test that the longitude reading changed when the alpaca is moving
-	 */
-	@Test
-	public void getLongitudeAlpacaMovingTest() {
-		
-		fail("Need EmulatedPacaTraca that always moves; "
-				+ "not yet implemented in factory");
 		float longitude1 = simulator.getLongitudeDecimalDegrees();
-		waitForAlpacaToMove();
+		waitForAlpacaToMove(1);
+		float latitude2 = simulator.getLatitudeDecimalDegrees();
 		float longitude2 = simulator.getLatitudeDecimalDegrees();
 		
-		// The alpaca should have moved, so the longitude should have changed
-		assertTrue("Longitudes should be different", 
-				Math.abs(longitude1 - longitude2) > 0.000000000);
+		// The alpaca should have moved, so the latitude or longitude should 
+		// have changed
+		assertTrue("Either latitude or longitude should be different", 
+				(Math.abs(longitude1 - longitude2) > 0.000000000) ||
+				Math.abs(latitude1 - latitude2) > 0.000000000);
 	}
 	
 	/*
-	 * Test that the speed reading of the alpaca changes. Uses a simulator
-	 * where the alpaca changed its speed each time it moves.
+	 * Test that the speed reading is positive when the alpaca is moving
 	 */
-	@Test
-	public void speedChangesTest() {
+	@Test 
+	public void testSpeedIsPositiveWhileMoving() {
 		
-		fail("Need EmulatedPacaTraca that always changes speed; "
-				+ "not yet implemented in factory");
-		float speed1 = simulator.getSpeed();
-		System.out.println("First speed is "+speed1);
-		waitForAlpacaToMove();
-		float speed2 = simulator.getSpeed();
-		System.out.println("Second speed is "+speed2);
-		
-		// The alpaca should have changed speed
-		assertTrue("Speeds should be different", speed1 != speed2);
+		simulator = factory.createPacaTracaMoveNormalOnly(SENSOR_ID);
+		waitForAlpacaToMove(1);
+		float speed = simulator.getSpeed();
+		assertTrue("Speed is "+speed+"; should be positive", speed > 0.0);
 	}
 	
 	/*
-	 * Test that the direction of the alpaca changes by calculating the angle
-	 * of movement on two subsequent steps and ensuring they are different.
+	 * Test the the altitude reading changes while the alpaca is grazing.
 	 */
 	@Test
-	public void directionChangesTest(){
+	public void testAltitudeChangesWhileGrazing() {
 		
-		fail("Need EmulatedPacaTraca that always changes heading; "
-				+ "not yet implemented in factory");
-		float angleStep1 = simulator.getCourse();
-		System.out.println("First angle is "+angleStep1);
-		waitForAlpacaToMove();
+		simulator = factory.createPacaTracaGrazeOnly(SENSOR_ID);
+		float altitude1 = simulator.getAltitude();
+		waitForAlpacaToMove(3);
+		float altitude2 = simulator.getAltitude();
 		
-		float angleStep2 = simulator.getCourse();
-		System.out.println("Second angle is "+angleStep2);
-		
-		// The angle of the two steps should be different
-		assertTrue("Angles should be different", angleStep1 != angleStep2);
+		// The alpaca's altitude should have changed
+		assertTrue("Altitudes are "+altitude1+" and "+altitude2+
+				"; they should be different", Math.abs(altitude1 - altitude2) > 0.00);
 	}
 	
-	private void waitForAlpacaToMove(){
+	/*
+	 * Test the the latitude and longitude stay the same while the alpaca is
+	 * standing still
+	 */
+	@Test
+	public void testLatLongSameWhileAlpacaStandingStill() {
+		
+		simulator = factory.createPacaTracaStandStillOnly(SENSOR_ID);
+		float latitude1 = simulator.getLatitudeDecimalDegrees();
+		float longitude1 = simulator.getLongitudeDecimalDegrees();
+		waitForAlpacaToMove(1);
+		float latitude2 = simulator.getLatitudeDecimalDegrees();
+		float longitude2 = simulator.getLongitudeDecimalDegrees();
+		assertTrue("Latitude and longitude should not have changed.", 
+				(Math.abs(longitude1 - longitude2) <= 0.000000000) &&
+				Math.abs(latitude1 - latitude2) <= 0.000000000);
+	}
+	
+	/*
+	 * Test that the speed reading is 0 when the alpaca is standing still.
+	 */
+	@Test
+	public void testSpeedZeroWhileAlpacaStandlingStill() {
+		
+		simulator = factory.createPacaTracaStandStillOnly(SENSOR_ID);
+		waitForAlpacaToMove(1);
+		float speed = simulator.getSpeed();
+		assertTrue("Speed is "+speed+"; should be zero", speed == 0);
+		
+	}
+	
+	/*
+	 * Test that the temperature reading increases when the alpaca has a fever.
+	 */
+	@Test
+	public void testTemperatureIncreasesWhileFever() {
+		
+		// Test the slow fever event
+		simulator = factory.createPacaTracaSlowFeverOnly(SENSOR_ID);
+		float temp1 = simulator.getTemperature();
+		waitForAlpacaTemperatureChange(1);
+		float temp2 = simulator.getTemperature();
+		assertTrue("Temperatures are "+temp1+" and "+temp2+
+				"; it should have increased", temp2 - temp1 > 0.00);
+		
+		// Test the sudden fever event
+		simulator = factory.createPacaTracaSuddenFeverOnly(SENSOR_ID);
+		temp1 = simulator.getTemperature();
+		waitForAlpacaTemperatureChange(1);
+		temp2 = simulator.getTemperature();
+		assertTrue("Temperatures are "+temp1+" and "+temp2+
+				"; it should have increased", temp2 - temp1 > 0.00);
+	}
+	
+	/*
+	 * Test that the temperature reading decreases when the alpaca has chills.
+	 */
+	@Test
+	public void testTemperatureDecreasesWhileChills() {
+		
+		// Test the slow chills event
+		simulator = factory.createPacaTracaSlowChillOnly(SENSOR_ID);
+		float temp1 = simulator.getTemperature();
+		waitForAlpacaTemperatureChange(1);
+		float temp2 = simulator.getTemperature();
+		assertTrue("Temperatures are "+temp1+" and "+temp2+
+				"; it should have decreased", temp1 - temp2 > 0.00);
+		
+		// Test the sudden chills event
+		simulator = factory.createPacaTracaSuddenChillOnly(SENSOR_ID);
+		temp1 = simulator.getTemperature();
+		waitForAlpacaTemperatureChange(1);
+		temp2 = simulator.getTemperature();
+		assertTrue("Temperatures are "+temp1+" and "+temp2+
+				"; it should have decreased", temp1 - temp2 > 0.00);
+	}
+	
+	/*
+	 * Helper method for tests on alpaca movement
+	 */
+	private void waitForAlpacaToMove(int numMoves){
 		try {
-			Thread.sleep(MotionRunnable.THREAD_SLEEP_TIME_MILLIS);
+			Thread.sleep(MotionRunnable.THREAD_SLEEP_TIME_MILLIS * numMoves);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Helper method for tests on alpaca temperature changes
+	 */
+	private void waitForAlpacaTemperatureChange(int numChanges){
+		try {
+			Thread.sleep(TemperatureRunnable.THREAD_SLEEP_TIME_MILLIS * numChanges);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

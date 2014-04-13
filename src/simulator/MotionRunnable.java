@@ -1,15 +1,13 @@
 package simulator;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Random;
 
 /**
  * 
  * @author Sonia Rode
  *
- * Generates latitude and longitude locations for an alpaca
+ * Manipulates latitude, longitude, and altitude for an alpaca
  * using simulated movement.
  * 
  */
@@ -35,15 +33,14 @@ public class MotionRunnable implements Runnable {
 		LIFTING_HEAD;
 	}
 
-	private static Map<MotionEvent, Double> eventProbabilities;
+	private static LinkedHashMap<MotionEvent, Double> eventProbabilities;
 	static {
-		Map<MotionEvent, Double> map = new HashMap<MotionEvent, Double>();
-		map.put(MotionEvent.MOVE_NORMAL, 0.40);
-		map.put(MotionEvent.GRAZE, 0.40);
-		map.put(MotionEvent.MOVE_FAR, 0.05);
-		map.put(MotionEvent.STAND_STILL, 0.10);
-		map.put(MotionEvent.LIE_STILL, 0.05);
-		eventProbabilities = Collections.unmodifiableMap(map);
+		eventProbabilities = new LinkedHashMap<MotionEvent, Double>();
+		eventProbabilities.put(MotionEvent.MOVE_NORMAL, 0.40);
+		eventProbabilities.put(MotionEvent.GRAZE, 0.40);
+		eventProbabilities.put(MotionEvent.MOVE_FAR, 0.05);
+		eventProbabilities.put(MotionEvent.STAND_STILL, 0.10);
+		eventProbabilities.put(MotionEvent.LIE_STILL, 0.05);
 	}
 
 	private MotionEvent currentEvent;
@@ -59,24 +56,46 @@ public class MotionRunnable implements Runnable {
 	private volatile Random random;
 
 	/**
-	 * 
+	 * Creates a new MotionRunnable.
 	 * @param startLatitude the starting latitude of the alpaca
 	 * @param startLongitude the starting longitude of the alpaca
 	 * @param random the Random object used to randomize the alpaca's movement
 	 */
 	public MotionRunnable(float startLatitude, float startLongitude,
 			Random random){
+		previousLatitude = startLatitude;
+		previousLongitude = startLongitude;
 		currentLatitude = startLatitude;
 		currentLongitude = startLongitude;
 		altitude = STANDARD_ALTITUDE;
 		this.random = random;
 	}
 
+	/**
+	 * Creates a new MotionRunnable with an initial latitude-longitude
+	 * of 45-68.
+	 * @param random the Random object used to randomize the alpaca's movement
+	 */
 	public MotionRunnable(Random random){
 		// Set hard-coded initial position of alpaca
 		this(45.000000000f, 68.000000000f, random);
 	}
 
+	/**
+	 * Creates a new MotionRunnable with the given event probabilities.
+	 * @param random the Random object used to randomize the alpaca's movement
+	 * @param probs the probabilities to use for each MotionEvent
+	 */
+	public MotionRunnable(Random random, LinkedHashMap<MotionEvent, Double> probs){
+		this(random);
+		if (probs != null)
+			eventProbabilities = probs;
+	}
+
+	/**
+	 * Creates a new MotionRunnable with an initial latitude-longitude
+	 * of 45-68.
+	 */
 	public MotionRunnable(){
 		this(new Random());
 	}
@@ -85,7 +104,7 @@ public class MotionRunnable implements Runnable {
 	public void run() {
 		while (true) {
 			if (countdownToNextEvent <= 0){
-				currentEvent = chooseEvent();
+				currentEvent = chooseEventAndSetup();
 			}
 			countdownToNextEvent--;
 			switch(currentEvent)
@@ -140,61 +159,49 @@ public class MotionRunnable implements Runnable {
 	public int getMillisBetweenMeasurements(){
 		return THREAD_SLEEP_TIME_MILLIS;
 	}
-	
+
 	public double getAltitude(){
 		return altitude;
 	}
 
 	/*
-	 *  Use event probabilities to randomly choose an event
+	 *  Use event probabilities to randomly choose an event, and set variables
+	 *  for the event
 	 */
-	private MotionEvent chooseEvent(){
-		
-		double dice = random.nextDouble();
+	private MotionEvent chooseEventAndSetup(){
 
-		if (dice < eventProbabilities.get(MotionEvent.MOVE_NORMAL)){
+		MotionEvent chosenEvent = 
+				MathUtils.chooseEventForProbability(random.nextDouble(), 
+						eventProbabilities);
+
+		switch(chosenEvent){
+		case MOVE_NORMAL:
 			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
 			heading = random.nextDouble() * Math.PI*2;
 			altitude = STANDARD_ALTITUDE;
 			stepUnitMultiplier = MathUtils.randomIntBetween(1, 10, random);
-			return MotionEvent.MOVE_NORMAL;
-		} 
-		else if (dice < (eventProbabilities.get(MotionEvent.MOVE_NORMAL) +
-				eventProbabilities.get(MotionEvent.GRAZE))){
+			break;
+		case GRAZE:
 			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
 			altitude = STANDARD_ALTITUDE;
 			grazeStatus = GrazeStatus.LOWERING_HEAD;
-			return MotionEvent.GRAZE;
-		}
-		else if (dice < (eventProbabilities.get(MotionEvent.MOVE_NORMAL) +
-				eventProbabilities.get(MotionEvent.GRAZE) +
-				eventProbabilities.get(MotionEvent.MOVE_FAR))){
+			break;
+		case MOVE_FAR:
 			countdownToNextEvent = MathUtils.randomIntBetween(20, 100, random);
 			heading = random.nextDouble() * Math.PI*2;
 			altitude = STANDARD_ALTITUDE;
 			stepUnitMultiplier = MathUtils.randomIntBetween(1, 10, random);
-			return MotionEvent.MOVE_FAR;
-		}
-		else if (dice < (eventProbabilities.get(MotionEvent.MOVE_NORMAL) +
-				eventProbabilities.get(MotionEvent.GRAZE) +
-				eventProbabilities.get(MotionEvent.MOVE_FAR) +
-				eventProbabilities.get(MotionEvent.STAND_STILL))){
+			break;
+		case STAND_STILL:
 			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
 			altitude = STANDARD_ALTITUDE;
-			return MotionEvent.STAND_STILL;
-		}
-		else if (dice < (eventProbabilities.get(MotionEvent.MOVE_NORMAL) +
-				eventProbabilities.get(MotionEvent.GRAZE) +
-				eventProbabilities.get(MotionEvent.MOVE_FAR) +
-				eventProbabilities.get(MotionEvent.STAND_STILL) +
-				eventProbabilities.get(MotionEvent.LIE_STILL))){
+			break;
+		case LIE_STILL:
 			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
 			altitude = STANDARD_ALTITUDE - 3;
-			return MotionEvent.LIE_STILL;
+			break;
 		}
-		countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
-		altitude = STANDARD_ALTITUDE;
-		return MotionEvent.STAND_STILL;
+		return chosenEvent;
 	}
 
 	/*
