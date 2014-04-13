@@ -11,7 +11,9 @@ package db;
  * @author kemal
  */
 import java.sql.*;
+
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -28,6 +30,7 @@ public class DataUI implements ActionListener {
 	// define UI global variables
 
 	JFrame MainWindow;
+	JFrame InsertWindow;
 	JLabel lbl_ID;
 	JLabel lbl_sensorID;
 	JLabel lbl_name;
@@ -44,6 +47,8 @@ public class DataUI implements ActionListener {
 	JButton btn_Prev = new JButton("Prev");
 	JButton btn_First = new JButton("First");
 	JButton btn_Last = new JButton("Last");
+	JButton btn_Insert = new JButton("Add New Alpaca");
+	JButton btn_Delete = new JButton("Remove Current Alpaca");
 
 	public DataUI(List<String> sensorIDs) {
 		this.sensorIDs = sensorIDs;
@@ -56,14 +61,14 @@ public class DataUI implements ActionListener {
 		// navigating through returned ResultSet)
 		CreateUI();
 		// Bind the fields from DB to our GUI
-		//DisplayDataInUI();
+		// DisplayDataInUI();
 	}
 
 	public Connection getDBconnection() {
 		return CON;
 	}
-	
-	public String getCurrentSensorID(){
+
+	public String getCurrentSensorID() {
 		return sensorIDs.get(currentSensorIndex);
 	}
 
@@ -74,8 +79,8 @@ public class DataUI implements ActionListener {
 			// Create connection to DB, username and password stored in plain
 			// here
 			// eventually we will make a config file
-			CON = DriverManager.getConnection("jdbc:mysql://blah", "blah",
-					"blah");
+			CON = DriverManager.getConnection("jdbc:mysql://130.111.197.96/Paca-Traca", "remote",
+					"pass");
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}
@@ -87,7 +92,7 @@ public class DataUI implements ActionListener {
 			// object back
 			STA = CON.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 					ResultSet.CONCUR_READ_ONLY);
-			String query = "SELECT * FROM alpaca_test";
+			String query = "SELECT * FROM Alpaca_Data";
 			RES = STA.executeQuery(query);
 
 		} catch (Exception ex) {
@@ -97,7 +102,7 @@ public class DataUI implements ActionListener {
 
 	private void CreateUI() {
 		MainWindow = new JFrame();
-		MainWindow.setSize(640, 300);
+		MainWindow.setSize(720, 400);
 		MainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		createUILabels();
 		createUITextFields();
@@ -133,12 +138,17 @@ public class DataUI implements ActionListener {
 		InfoPanel.add(btn_Prev);
 		InfoPanel.add(btn_Next);
 		InfoPanel.add(btn_Last);
+		InfoPanel.add(btn_Insert);
+		InfoPanel.add(btn_Delete);
 
 		btn_Next.addActionListener(this);
 		btn_Prev.addActionListener(this);
 		btn_First.addActionListener(this);
 		btn_Last.addActionListener(this);
-
+		btn_Insert.addActionListener(this);
+		btn_Delete.addActionListener(this);
+		
+		
 		MainWindow.add(InfoPanel);
 		MainWindow.setVisible(true);
 
@@ -176,13 +186,14 @@ public class DataUI implements ActionListener {
 		txt_roll = new JTextField(10);
 	}
 
-	private void DisplayDataInUI() {
+	public void DisplayDataInUI() {
 		try {
 			RES.next();
-			txt_ID.setText(RES.getString("ID"));
-			txt_sensorID.setText(RES.getString("Sensor_ID"));
+			//txt_ID.setText(RES.getString("ID"));
+			txt_ID.setText(RES.getString("Alpaca_ID"));
 			txt_name.setText(RES.getString("Name"));
 			txt_age.setText(RES.getString("Age"));
+			txt_gender.setText(RES.getString("Gender"));
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}
@@ -204,57 +215,114 @@ public class DataUI implements ActionListener {
 		if (what == btn_Last) {
 			btn_Last_Action();
 		}
-	}
-
-	public void btn_Next_Action() {
-		if (currentSensorIndex == sensorIDs.size()-1){
-			currentSensorIndex = 0;
-		} else {
-			currentSensorIndex++;
+		if (what == btn_Insert){
+			btn_Insert_Action();
 		}
-//		try {
-//			if (RES.next()) {
-//				txt_ID.setText(RES.getString("ID"));
-//				txt_sensorID.setText(RES.getString("Sensor_ID"));
-//				txt_name.setText(RES.getString("Name"));
-//				txt_age.setText(RES.getString("Age"));
-//			} else {
-//				RES.previous();
-//				JOptionPane.showMessageDialog(null, "This is the last record!");
-//			}
-//		} catch (Exception ex) {
-//			System.out.println(ex);
+		if (what == btn_Delete){
+			btn_Delete_Action();		}
+	}
+	
+	public void btn_Insert_Action(){
+		//Functionality I was working on to add a alpaca to the DB, communication with DB is working 
+		int alpaca_ID = Integer.parseInt(JOptionPane.showInputDialog("What is the alpaca's id number?"));
+		String name = JOptionPane.showInputDialog("What is the Alpaca's Name?");
+		String gender = JOptionPane.showInputDialog("What is the Alpaca's Gender?");
+		int children = Integer.parseInt(JOptionPane.showInputDialog("How many children Does the alpaca have?"));
+		float weight = Float.parseFloat(JOptionPane.showInputDialog("Weight?"));
+		float height = Float.parseFloat(JOptionPane.showInputDialog("Height?"));
+		int age = Integer.parseInt(JOptionPane.showInputDialog("Age"));
+		String mother = JOptionPane.showInputDialog("Who is the alpaca's mother?");
+		String father = JOptionPane.showInputDialog("Who is the alpaca's father?");
+//		try{
+//			PreparedStatement pstmt = CON.prepareStatement("INSERT INTO 'Alpaca_Data' ('Alpaca_ID', 'Name', 'Gender',  'Children', 'Weight', 'Height', 'Age', 'Mother', 'Father')" +	
+//					"VALUES (?,?,?,?,?,?,?,?,?)");
+//		
+//			try {
+//					pstmt.setInt(1,Alpaca_ID);
+//					pstmt.setString(2,Name);
+//					pstmt.setString(3,Gender);
+//					pstmt.setInt(4,children);
+//					pstmt.setFloat(5,Weight);
+//					pstmt.setFloat(6,Height);
+//					pstmt.setInt(7,age);
+//					pstmt.setString(8,mother);
+//					pstmt.setString(9,father);
+//					try{
+//						pstmt.executeUpdate();
+//					}catch (Exception e){
+//						System.out.println("First Catch");
+//						System.out.println(e);
+//					}
+//		
+//				}catch(Exception e){
+//					System.out.println("2 Catch");
+//					System.out.println(e);
+//				}
+//		}catch (Exception e)
+//		{
+//			System.out.println("3 Catch");
+//			System.out.println(e);
+//		}			
+		String query = "INSERT INTO `Paca-Traca`.`Alpaca_Data` (`Alpaca_ID`, `Name`, `Gender`, `Children`, `Weight`, `Height`, `Age`, `Mother`, `Father`) VALUES " +
+				"(NULL,'Josh','male'," + children + "," + weight + "," + height + "," + age + ",'mom','dad');";
+		try {
+			STA.executeUpdate(query);
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+		
+		
+	
+	public void btn_Delete_Action(){
+		
+	}
+	public void btn_Next_Action() {
+//		if (currentSensorIndex == sensorIDs.size() - 1) {
+//			currentSensorIndex = 0;
+//		} else {
+//			currentSensorIndex++;
 //		}
+		 try {
+		 if (RES.next()) {
+		 //txt_ID.setText(RES.getString("ID"));
+		 txt_ID.setText(RES.getString("Alpaca_ID"));
+		 txt_name.setText(RES.getString("Name"));
+		 txt_age.setText(RES.getString("Age"));
+		 } else {
+			btn_First_Action();//Allows a circular list style navigations.
+		 }
+		 } catch (Exception ex) {
+		 System.out.println(ex);
+		 }
 
 	}
 
 	public void btn_Prev_Action() {
-		if (currentSensorIndex == 0){
-			currentSensorIndex = sensorIDs.size()-1;
-		} else {
-			currentSensorIndex--;
-		}
-//		try {
-//			if (RES.previous()) {
-//				txt_ID.setText(RES.getString("ID"));
-//				txt_sensorID.setText(RES.getString("Sensor_ID"));
-//				txt_name.setText(RES.getString("Name"));
-//				txt_age.setText(RES.getString("Age"));
-//			} else {
-//				RES.next();
-//				JOptionPane
-//						.showMessageDialog(null, "This is the first record!");
-//			}
-//		} catch (Exception ex) {
-//			System.out.println(ex);
+//		if (currentSensorIndex == 0) {
+//			currentSensorIndex = sensorIDs.size() - 1;
+//		} else {
+//			currentSensorIndex--;
 //		}
+		 try {
+		 if (RES.previous()) {
+		 //txt_ID.setText(RES.getString("ID"));
+		 txt_ID.setText(RES.getString("Alpaca_ID"));
+		 txt_name.setText(RES.getString("Name"));
+		 txt_age.setText(RES.getString("Age"));
+		 } else {
+			 btn_Last_Action(); //Allows a Circular list style navigations
+		 }
+		 } catch (Exception ex) {
+		 System.out.println(ex);
+		 }
 	}
 
 	public void btn_First_Action() {
 		try {
 			RES.first();
-			txt_ID.setText(RES.getString("ID"));
-			txt_sensorID.setText(RES.getString("Sensor_ID"));
+			//txt_ID.setText(RES.getString("ID"));
+			txt_ID.setText(RES.getString("Alpaca_ID"));
 			txt_name.setText(RES.getString("Name"));
 			txt_age.setText(RES.getString("Age"));
 
@@ -266,8 +334,8 @@ public class DataUI implements ActionListener {
 	public void btn_Last_Action() {
 		try {
 			RES.last();
-			txt_ID.setText(RES.getString("ID"));
-			txt_sensorID.setText(RES.getString("Sensor_ID"));
+			//txt_ID.setText(RES.getString("ID"));
+			txt_ID.setText(RES.getString("Alpaca_ID"));
 			txt_name.setText(RES.getString("Name"));
 			txt_age.setText(RES.getString("Age"));
 

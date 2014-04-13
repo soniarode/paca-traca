@@ -31,6 +31,8 @@ public class UIUpdater implements Runnable{
 			ui.txt_altitude.setText(curSensor.getAltitude().toString());
 			
 		}
+		//Was testing DB communication
+		//ui.DisplayDataInUI();
 	}
 
 
