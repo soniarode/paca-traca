@@ -33,18 +33,31 @@ public class DataUI implements ActionListener {
 
 	JFrame MainWindow;
 	JFrame InsertWindow;
+	JPanel insertPanel = new JPanel();
 	JLabel lbl_ID;
 	JLabel lbl_sensorID;
 	JLabel lbl_name;
 	JLabel lbl_age, lbl_gender;
 	JLabel lbl_lat, lbl_lon, lbl_speed, lbl_course, lbl_altitude, lbl_temp,
 			lbl_pitch, lbl_roll;
+	
+	//Insert Labels
+	JLabel lbl_Alpaca_ID, lbl_Name, lbl_Gender, 
+	 lbl_Num_Children, lbl_Weight, lbl_Height, 
+	 lbl_Age, lbl_Mother, lbl_Father;
+	//Insert Textfields
+	JTextField txt_Alpaca_ID, txt_Name, txt_Gender, 
+	 txt_Num_Children, txt_Weight, txt_Height, 
+	 txt_Age, txt_Mother, txt_Father;
+	
 	JTextField txt_ID;
 	JTextField txt_sensorID;
 	JTextField txt_name;
 	JTextField txt_age, txt_gender;
 	JTextField txt_lat, txt_lon, txt_speed, txt_course, txt_altitude, txt_temp,
 			txt_pitch, txt_roll;
+	
+	
 	JButton btn_Next = new JButton("Next");
 	JButton btn_Prev = new JButton("Prev");
 	JButton btn_First = new JButton("First");
@@ -172,6 +185,31 @@ public class DataUI implements ActionListener {
 		lbl_pitch = new JLabel("Pitch: ");
 		lbl_roll = new JLabel("Roll: ");
 	}
+	private void createUILabelsAdd(){
+		 lbl_Alpaca_ID = new JLabel("Alpaca ID: ");
+		 lbl_Name = new JLabel("Name: ");
+		 lbl_Gender = new JLabel("Gender: ");
+		 lbl_Num_Children = new JLabel("Number of Children: ");
+		 lbl_Weight = new JLabel("Weight: ");
+		 lbl_Height = new JLabel("Height: ");
+		 lbl_Age = new JLabel("Age: ");
+		 lbl_Mother = new JLabel("Mother: ");
+		 lbl_Father = new JLabel("Father: ");
+		 
+	}
+	
+	private void createUITextFieldsAdd(){
+		txt_Alpaca_ID= new JTextField(10);
+		txt_Name= new JTextField(10);
+		txt_Gender= new JTextField(10);
+		txt_Num_Children= new JTextField(10);
+		txt_Weight= new JTextField(10);
+		txt_Height= new JTextField(10);
+		txt_Age= new JTextField(10);
+		txt_Mother= new JTextField(10);
+		txt_Father= new JTextField(10);
+		
+	}
 
 	private void createUITextFields() {
 		txt_ID = new JTextField(10);
@@ -188,7 +226,34 @@ public class DataUI implements ActionListener {
 		txt_pitch = new JTextField(10);
 		txt_roll = new JTextField(10);
 	}
+	
+	private int createInsertUI(){
+		createUITextFieldsAdd();
+		createUILabelsAdd();
+		insertPanel.add(lbl_Alpaca_ID);
+		insertPanel.add(txt_Alpaca_ID);
+		insertPanel.add( lbl_Name);
+		insertPanel.add( txt_Name);
+		insertPanel.add(lbl_Gender);
+		insertPanel.add(txt_Gender);
+		insertPanel.add(lbl_Num_Children);
+		insertPanel.add(txt_Num_Children);
+		insertPanel.add(lbl_Weight);
+		insertPanel.add(txt_Weight);
+		insertPanel.add(lbl_Height );
+		insertPanel.add(txt_Height );
+		insertPanel.add(lbl_Age );
+		insertPanel.add(txt_Age );
+		insertPanel.add(lbl_Mother);
+		insertPanel.add(txt_Mother);
+		insertPanel.add(lbl_Father);
+		insertPanel.add(txt_Father);
+		int result = JOptionPane.showConfirmDialog(null,insertPanel,"Please enter fields for the new alpaca",
+				JOptionPane.OK_CANCEL_OPTION);
+		insertPanel.removeAll();
+		return result;
 
+	}
 	public void DisplayDataInUI() {
 		try {
 			RES.next();
@@ -226,16 +291,30 @@ public class DataUI implements ActionListener {
 	}
 	
 	public void btn_Insert_Action(){
+		int result = 0;
+		int alpaca_ID = 0;
+		String name = "";
+		String gender ="";
+		int children = 0;
+		float weight = 0;
+		float height = 0;
+		int age = 0;
+		String mother = "";
+		String father = "";
+		result = createInsertUI();
+		if(result == JOptionPane.OK_OPTION){
+			alpaca_ID = Integer.parseInt(txt_Alpaca_ID.getText());
+			name = txt_Name.getText();
+			gender = txt_Gender.getText();
+			children = Integer.parseInt(txt_Num_Children.getText());
+			weight = Float.parseFloat(txt_Weight.getText());
+			height = Float.parseFloat(txt_Height.getText());
+			age = Integer.parseInt(txt_Age.getText());
+			mother = txt_Mother.getText();
+			father = txt_Father.getText();
+		}
 		//Functionality I was working on to add a alpaca to the DB, communication with DB is working 
-		int alpaca_ID = Integer.parseInt(JOptionPane.showInputDialog("What is the alpaca's id number?"));
-		String name = JOptionPane.showInputDialog("What is the Alpaca's Name?");
-		String gender = JOptionPane.showInputDialog("What is the Alpaca's Gender?");
-		int children = Integer.parseInt(JOptionPane.showInputDialog("How many children Does the alpaca have?"));
-		float weight = Float.parseFloat(JOptionPane.showInputDialog("Weight?"));
-		float height = Float.parseFloat(JOptionPane.showInputDialog("Height?"));
-		int age = Integer.parseInt(JOptionPane.showInputDialog("Age"));
-		String mother = JOptionPane.showInputDialog("Who is the alpaca's mother?");
-		String father = JOptionPane.showInputDialog("Who is the alpaca's father?");
+
 		try{
 			PreparedStatement pstmt = Insert_CON.prepareStatement("INSERT INTO `Paca-Traca`.`Alpaca_Data` (`Alpaca_ID`, `Name`, `Gender`,  `Children`, `Weight`, `Height`, `Age`, `Mother`, `Father`)" +	
 					"VALUES (?,?,?,?,?,?,?,?,?)");
@@ -274,9 +353,9 @@ public class DataUI implements ActionListener {
 		
 	
 	public void btn_Delete_Action(){
-		// This doesn't work throws a MYSQL exception, its work in progress
+		
 		int delete_id = Integer.parseInt(JOptionPane.showInputDialog("Insert the ID number of the alpaca to delete?"));
-		//DELETE FROM `Paca-Traca`.`Alpaca_Data` WHERE `Alpaca_Data`.`Alpaca_ID` = 109
+		
 		try {
 			PreparedStatement pstmt = Insert_CON.prepareStatement("DELETE FROM `Paca-Traca`.`Alpaca_Data` WHERE `Alpaca_Data`.`Alpaca_ID` = ?;");
 			try {
@@ -296,44 +375,44 @@ public class DataUI implements ActionListener {
 		
 	}
 	public void btn_Next_Action() {
-//		if (currentSensorIndex == sensorIDs.size() - 1) {
-//			currentSensorIndex = 0;
-//		} else {
-//			currentSensorIndex++;
-//		}
-		 try {
-		 if (RES.next()) {
-		 //txt_ID.setText(RES.getString("ID"));
-		 txt_ID.setText(RES.getString("Alpaca_ID"));
-		 txt_name.setText(RES.getString("Name"));
-		 txt_age.setText(RES.getString("Age"));
-		 } else {
-			btn_First_Action();//Allows a circular list style navigations.
-		 }
-		 } catch (Exception ex) {
-		 System.out.println(ex);
-		 }
+		if (currentSensorIndex == sensorIDs.size() - 1) {
+			currentSensorIndex = 0;
+		} else {
+			currentSensorIndex++;
+		}
+//		 try {
+//		 if (RES.next()) {
+//		 //txt_ID.setText(RES.getString("ID"));
+//		 txt_ID.setText(RES.getString("Alpaca_ID"));
+//		 txt_name.setText(RES.getString("Name"));
+//		 txt_age.setText(RES.getString("Age"));
+//		 } else {
+//			btn_First_Action();//Allows a circular list style navigations.
+//		 }
+//		 } catch (Exception ex) {
+//		 System.out.println(ex);
+//		 }
 
 	}
 
 	public void btn_Prev_Action() {
-//		if (currentSensorIndex == 0) {
-//			currentSensorIndex = sensorIDs.size() - 1;
-//		} else {
-//			currentSensorIndex--;
-//		}
-		 try {
-		 if (RES.previous()) {
-		 //txt_ID.setText(RES.getString("ID"));
-		 txt_ID.setText(RES.getString("Alpaca_ID"));
-		 txt_name.setText(RES.getString("Name"));
-		 txt_age.setText(RES.getString("Age"));
-		 } else {
-			 btn_Last_Action(); //Allows a Circular list style navigations
-		 }
-		 } catch (Exception ex) {
-		 System.out.println(ex);
-		 }
+		if (currentSensorIndex == 0) {
+			currentSensorIndex = sensorIDs.size() - 1;
+		} else {
+			currentSensorIndex--;
+		}
+//		 try {
+//		 if (RES.previous()) {
+//		 //txt_ID.setText(RES.getString("ID"));
+//		 txt_ID.setText(RES.getString("Alpaca_ID"));
+//		 txt_name.setText(RES.getString("Name"));
+//		 txt_age.setText(RES.getString("Age"));
+//		 } else {
+//			 btn_Last_Action(); //Allows a Circular list style navigations
+//		 }
+//		 } catch (Exception ex) {
+//		 System.out.println(ex);
+//		 }
 	}
 
 	public void btn_First_Action() {
