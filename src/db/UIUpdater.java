@@ -21,7 +21,7 @@ public class UIUpdater implements Runnable{
 		int counter = 0;
 		String curSensorID;
 		PacaTraca curSensor;
-		
+		PushToDB DB = new PushToDB();
 		while (true){
 			curSensorID = ui.getCurrentSensorID();
 			curSensor = sensors.get(curSensorID);
@@ -32,10 +32,13 @@ public class UIUpdater implements Runnable{
 			ui.txt_course.setText(curSensor.getCourse().toString());
 			ui.txt_temp.setText(curSensor.getTemperature().toString());
 			ui.txt_altitude.setText(curSensor.getAltitude().toString());
+			//Trying to test pushing sensor data to the database.
 			if (counter % 5 == 0)
 			{
-				//push_data_to_DB(curSensor);
+				// Still a work in progess
+				//DB.push_data_to_DB(curSensor);
 			}
+			counter++;
 			
 		}
 		//Was testing DB communication
