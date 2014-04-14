@@ -22,6 +22,8 @@ public class DataUI implements ActionListener {
 
 	// define global variables
 	Connection CON;
+	Connection Insert_CON;
+	Statement Insert_STA;
 	Statement STA;
 	ResultSet RES;
 	List<String> sensorIDs;
@@ -81,6 +83,7 @@ public class DataUI implements ActionListener {
 			// eventually we will make a config file
 			CON = DriverManager.getConnection("jdbc:mysql://130.111.197.96/Paca-Traca", "remote",
 					"pass");
+			Insert_CON = DriverManager.getConnection("jdbc:mysql://130.111.197.96/Paca-Traca","remote","pass");
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}
@@ -233,48 +236,63 @@ public class DataUI implements ActionListener {
 		int age = Integer.parseInt(JOptionPane.showInputDialog("Age"));
 		String mother = JOptionPane.showInputDialog("Who is the alpaca's mother?");
 		String father = JOptionPane.showInputDialog("Who is the alpaca's father?");
-//		try{
-//			PreparedStatement pstmt = CON.prepareStatement("INSERT INTO 'Alpaca_Data' ('Alpaca_ID', 'Name', 'Gender',  'Children', 'Weight', 'Height', 'Age', 'Mother', 'Father')" +	
-//					"VALUES (?,?,?,?,?,?,?,?,?)");
-//		
-//			try {
-//					pstmt.setInt(1,Alpaca_ID);
-//					pstmt.setString(2,Name);
-//					pstmt.setString(3,Gender);
-//					pstmt.setInt(4,children);
-//					pstmt.setFloat(5,Weight);
-//					pstmt.setFloat(6,Height);
-//					pstmt.setInt(7,age);
-//					pstmt.setString(8,mother);
-//					pstmt.setString(9,father);
-//					try{
-//						pstmt.executeUpdate();
-//					}catch (Exception e){
-//						System.out.println("First Catch");
-//						System.out.println(e);
-//					}
-//		
-//				}catch(Exception e){
-//					System.out.println("2 Catch");
-//					System.out.println(e);
-//				}
-//		}catch (Exception e)
-//		{
-//			System.out.println("3 Catch");
-//			System.out.println(e);
-//		}			
-		String query = "INSERT INTO `Paca-Traca`.`Alpaca_Data` (`Alpaca_ID`, `Name`, `Gender`, `Children`, `Weight`, `Height`, `Age`, `Mother`, `Father`) VALUES " +
-				"(NULL,'Josh','male'," + children + "," + weight + "," + height + "," + age + ",'mom','dad');";
-		try {
-			STA.executeUpdate(query);
-		} catch (SQLException e) {
+		try{
+			PreparedStatement pstmt = Insert_CON.prepareStatement("INSERT INTO `Paca-Traca`.`Alpaca_Data` (`Alpaca_ID`, `Name`, `Gender`,  `Children`, `Weight`, `Height`, `Age`, `Mother`, `Father`)" +	
+					"VALUES (?,?,?,?,?,?,?,?,?)");
+		
+			try {
+					pstmt.setInt(1,alpaca_ID);
+					pstmt.setString(2,name);
+					pstmt.setString(3,gender);
+					pstmt.setInt(4,children);
+					pstmt.setFloat(5,weight);
+					pstmt.setFloat(6,height);
+					pstmt.setInt(7,age);
+					pstmt.setString(8,mother);
+					pstmt.setString(9,father);
+					try{
+						pstmt.executeUpdate();
+					}catch (Exception e){
+						System.out.println("First Catch");
+						System.out.println(e);
+					}
+		
+				}catch(Exception e){
+					System.out.println("2 Catch");
+					System.out.println(e);
+				}
+		}catch (Exception e)
+		{
+			System.out.println("3 Catch");
 			System.out.println(e);
-		}
+		}	
+		//query the database again to get an updated list of alpaca's
+		SelectDataFromDB();
 	}
+	
 		
 		
 	
 	public void btn_Delete_Action(){
+		// This doesn't work throws a MYSQL exception, its work in progress
+		int delete_id = Integer.parseInt(JOptionPane.showInputDialog("Insert the ID number of the alpaca to delete?"));
+		//DELETE FROM `Paca-Traca`.`Alpaca_Data` WHERE `Alpaca_Data`.`Alpaca_ID` = 109
+		try {
+			PreparedStatement pstmt = Insert_CON.prepareStatement("DELETE FROM `Paca-Traca`.`Alpaca_Data` WHERE `Alpaca_Data`.`Alpaca_ID` = ?);");
+			try {
+				pstmt.setInt(1,delete_id);
+			}catch(SQLException e){
+				System.out.println(e);
+			}
+			try {
+				pstmt.executeUpdate();
+			}catch (SQLException e){
+				System.out.println(e);
+				}
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+
 		
 	}
 	public void btn_Next_Action() {
