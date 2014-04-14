@@ -278,7 +278,7 @@ public class DataUI implements ActionListener {
 		int delete_id = Integer.parseInt(JOptionPane.showInputDialog("Insert the ID number of the alpaca to delete?"));
 		//DELETE FROM `Paca-Traca`.`Alpaca_Data` WHERE `Alpaca_Data`.`Alpaca_ID` = 109
 		try {
-			PreparedStatement pstmt = Insert_CON.prepareStatement("DELETE FROM `Paca-Traca`.`Alpaca_Data` WHERE `Alpaca_Data`.`Alpaca_ID` = ?);");
+			PreparedStatement pstmt = Insert_CON.prepareStatement("DELETE FROM `Paca-Traca`.`Alpaca_Data` WHERE `Alpaca_Data`.`Alpaca_ID` = ?;");
 			try {
 				pstmt.setInt(1,delete_id);
 			}catch(SQLException e){
@@ -292,7 +292,7 @@ public class DataUI implements ActionListener {
 		} catch (SQLException e) {
 			System.out.println(e);
 		}
-
+		SelectDataFromDB();
 		
 	}
 	public void btn_Next_Action() {
