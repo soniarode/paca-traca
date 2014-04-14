@@ -1,6 +1,7 @@
 package db;
 
 import java.util.Map;
+import db.PushToDB.*;
 
 import simulator.PacaTraca;
 
@@ -17,8 +18,10 @@ public class UIUpdater implements Runnable{
 
 	@Override
 	public void run() {
+		int counter = 0;
 		String curSensorID;
 		PacaTraca curSensor;
+		
 		while (true){
 			curSensorID = ui.getCurrentSensorID();
 			curSensor = sensors.get(curSensorID);
@@ -29,6 +32,10 @@ public class UIUpdater implements Runnable{
 			ui.txt_course.setText(curSensor.getCourse().toString());
 			ui.txt_temp.setText(curSensor.getTemperature().toString());
 			ui.txt_altitude.setText(curSensor.getAltitude().toString());
+			if (counter % 5 == 0)
+			{
+				//push_data_to_DB(curSensor);
+			}
 			
 		}
 		//Was testing DB communication
