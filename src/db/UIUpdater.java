@@ -73,8 +73,8 @@ public class UIUpdater implements Runnable {
 
 		 	// Trying to test pushing sensor data to the database.
 			if (counter % 5 == 0) {
-				// Still a work in progess
-				// DB.push_data_to_DB(curSensor);
+				//Still a work in progess
+				DB.push_data_to_DB(curSensor,counter);
 			}
 			counter++;
 

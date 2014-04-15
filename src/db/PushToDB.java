@@ -30,28 +30,29 @@ public class PushToDB {
 		}
 		return Sensor_CON;
 	}
-	public void push_data_to_DB(PacaTraca curSensor)
+	public void push_data_to_DB(PacaTraca curSensor,int index)
 	{
 
 		
 		try{
 			PreparedStatement pstmt = Sensor_CON.prepareStatement("INSERT INTO `Paca-Traca`.`Sensor_Data` " +
-					"(`sensor_ID`,`Latitude`,`Longitude`,`Altitude`,`Temperature`,`Pitch`,`Roll`,`Speed`,`Course`,`GPSFix`,`Number_Satellites`,`CompassHeading`,`SignalQuality`)"+
-					"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+					"(`index`,`sensor_ID`,`Latitude`,`Longitude`,`Altitude`,`Temperature`,`Pitch`,`Roll`,`Speed`,`Course`,`GPSFix`,`Number_Satellites`,`CompassHeading`,`SignalQuality`)"+
+					"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			try{
-				pstmt.setInt(1, java.sql.Types.INTEGER);
-				pstmt.setFloat(2, 0);
-				pstmt.setFloat(3, 0);
-				pstmt.setFloat(4, 0);
-				pstmt.setFloat(5, 0);
-				pstmt.setFloat(6, 0);
-				pstmt.setFloat(7, 0);
-				pstmt.setInt(8, 0);
-				pstmt.setInt(9, 0);
-				pstmt.setBoolean(10, false);
-				pstmt.setInt(11, 0);
-				pstmt.setFloat(12, 0);
-				pstmt.setInt(13, 0);
+				pstmt.setNull(1, index);
+				pstmt.setString(2,curSensor.getSensorID());
+				pstmt.setFloat(3, curSensor.getLatitudeDecimalDegrees());
+				pstmt.setFloat(4, curSensor.getLongitudeDecimalDegrees());
+				pstmt.setFloat(5, curSensor.getAltitude());
+				pstmt.setFloat(6, curSensor.getTemperature());
+				pstmt.setFloat(7, (float) 2.0/*curSensor.getPitch()*/);
+				pstmt.setFloat(8, (float) 2.0/*curSensor.getRoll()*/);
+				pstmt.setFloat(9, curSensor.getSpeed());
+				pstmt.setFloat(10, (float) 2.0/*curSensor.getCourse()*/);
+				pstmt.setBoolean(11, false);
+				pstmt.setInt(12,curSensor.getNumSatellites());
+				pstmt.setFloat(13, curSensor.getCompassHeading() );
+				pstmt.setInt(14, curSensor.getSignalQuality() );
 				try{
 					pstmt.executeUpdate();
 				}catch (Exception e){

@@ -34,10 +34,11 @@ public class DataUI implements ActionListener {
 	int currentSensorIndex;
 
 	// define UI global variables
-
+	 
 	JFrame MainWindow;
 	JFrame InsertWindow;
 	JPanel insertPanel = new JPanel();
+	
 	JLabel lbl_ID;
 	JLabel lbl_sensorID;
 	JLabel lbl_name;
@@ -268,6 +269,7 @@ public class DataUI implements ActionListener {
 		insertPanel.add(txt_Mother);
 		insertPanel.add(lbl_Father);
 		insertPanel.add(txt_Father);
+		
 		int result = JOptionPane.showConfirmDialog(null,insertPanel,"Please enter fields for the new alpaca",
 				JOptionPane.OK_CANCEL_OPTION);
 		insertPanel.removeAll();
