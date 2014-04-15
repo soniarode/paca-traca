@@ -49,7 +49,7 @@ public class ConsoleUIMain {
 					// The user should have entered the points like
 					// (1,2),(3,4),(5,6)...,(6,3) with no whitespace!
 					String listOfPoints = console.next();
-					processBoundaryInputs(listOfPoints);
+					AlertUtils.processBoundaryInputs(listOfPoints, settings);
 					//settings.setBoundaries();
 				} 
 				else if (userInput.toLowerCase().equals("show-boundaries")){
@@ -90,7 +90,7 @@ public class ConsoleUIMain {
 
 	private void boundaryAlerts(){
 		for (Alert alert: alerts.values()){
-			alert.boundaryAlert();
+			System.out.println(alert.boundaryAlert());
 		}
 	}
 
@@ -137,35 +137,6 @@ public class ConsoleUIMain {
 		else {
 			System.out.println(prefix + "Latitude: "+thePaca.getLatitudeDecimalDegrees());
 			System.out.println(prefix + "Longitude: "+thePaca.getLongitudeDecimalDegrees());
-		}
-	}
-
-	/*
-	 * Parses the boundary points input entered by the user and sets
-	 * these in Settings. Prints error message on bad input.
-	 */
-	private void processBoundaryInputs(String listOfPoints){
-		String listOfPointsNoWhitespace = listOfPoints.replaceAll("\\s+", "");
-		String cleanListOfPoints = listOfPointsNoWhitespace.substring(1, 
-				listOfPointsNoWhitespace.length()-1);
-		String points[] = cleanListOfPoints.split("\\),\\(");
-		if (points.length < 3){
-			System.out.println("Error: Must enter at least 3 points!");
-		}
-		else {
-			float[] latValues = new float[points.length];
-			float[] lonValues = new float[points.length];
-			try {
-				for (int i=0; i<points.length; i++){
-					String xy[] = points[i].split(",");
-					latValues[i] = Float.valueOf(xy[0]);
-					lonValues[i] = Float.valueOf(xy[1]);
-				}
-				settings.setLatArray(latValues);
-				settings.setLonArray(lonValues);
-			} catch (RuntimeException e){
-				System.out.println("Error: Bad input for boundary points.");
-			}
 		}
 	}
 

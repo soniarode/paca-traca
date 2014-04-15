@@ -1,5 +1,7 @@
 package general;
 
+import gui.AlertUpdater;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,10 +38,13 @@ public class PacaTracaSystemImpl implements PacaTracaSystem {
 			pacaTracaAlerts.put(pacaID, new Alert(pacaTracaForKey, settings));
 		}
 		
-		dataUI = new DataUI(new ArrayList<String>(pacaTracas.keySet()));
-		uiUpdater = new UIUpdater(dataUI, pacaTracas);
+		dataUI = new DataUI(new ArrayList<String>(pacaTracas.keySet()), settings, 
+				pacaTracaAlerts.values());
+		uiUpdater = new UIUpdater(dataUI, pacaTracas, pacaTracaAlerts);
 		Thread uiUpdateThread = new Thread(uiUpdater);
 		uiUpdateThread.start();
+		Thread alertUpdateThread = new Thread(new AlertUpdater(dataUI));
+		alertUpdateThread.start();
 	}
 
 	@Override

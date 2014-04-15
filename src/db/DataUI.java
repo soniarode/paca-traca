@@ -10,12 +10,16 @@ package db;
  *
  * @author kemal
  */
+import general.Alert;
+import general.Settings;
+import gui.AlertPanel;
+
 import java.sql.*;
 
 import javax.swing.*;
 
-import java.awt.*;
 import java.awt.event.*;
+import java.util.Collection;
 import java.util.List;
 
 public class DataUI implements ActionListener {
@@ -64,8 +68,11 @@ public class DataUI implements ActionListener {
 	JButton btn_Last = new JButton("Last");
 	JButton btn_Insert = new JButton("Add New Alpaca");
 	JButton btn_Delete = new JButton("Remove Current Alpaca");
+	
+	AlertPanel alertPanel;
 
-	public DataUI(List<String> sensorIDs) {
+	public DataUI(List<String> sensorIDs, Settings settings, 
+			Collection<Alert> alerts) {
 		this.sensorIDs = sensorIDs;
 		// initialize the connection to MySQL database
 		ConnectToDB();
@@ -74,7 +81,7 @@ public class DataUI implements ActionListener {
 		SelectDataFromDB();
 		// Initialize GUI (MainWindow, text fields, labels and buttons for
 		// navigating through returned ResultSet)
-		CreateUI();
+		CreateUI(settings, alerts);
 		// Bind the fields from DB to our GUI
 		// DisplayDataInUI();
 	}
@@ -116,13 +123,17 @@ public class DataUI implements ActionListener {
 		}
 	}
 
-	private void CreateUI() {
+	private void CreateUI(Settings settings, Collection<Alert> alerts) {
 		MainWindow = new JFrame();
-		MainWindow.setSize(720, 400);
+		BoxLayout windowLayout = new BoxLayout(MainWindow.getContentPane(), 
+				BoxLayout.Y_AXIS);
+		MainWindow.setLayout(windowLayout);
+		
 		MainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		createUILabels();
 		createUITextFields();
 
+		// Create JPanel for alpaca data
 		JPanel InfoPanel = new JPanel();
 		InfoPanel.add(lbl_ID);
 		InfoPanel.add(txt_ID);
@@ -164,8 +175,17 @@ public class DataUI implements ActionListener {
 		btn_Insert.addActionListener(this);
 		btn_Delete.addActionListener(this);
 		
+		// Create JPanel for Alerts
+		this.alertPanel = new AlertPanel(settings, alerts);
+		//JPanel alertPanel = new JPanel(new BorderLayout());
+		//alertPanel.add();
 		
-		MainWindow.add(InfoPanel);
+		
+		MainWindow.getContentPane().add(InfoPanel);
+		MainWindow.getContentPane().add(alertPanel);
+		MainWindow.pack();
+		MainWindow.setSize(840, 900);
+		
 		MainWindow.setVisible(true);
 
 	}
@@ -254,6 +274,11 @@ public class DataUI implements ActionListener {
 		return result;
 
 	}
+	
+	public void updateAlertsDisplay(){
+		alertPanel.updateAlertsDisplay();
+	}
+	
 	public void DisplayDataInUI() {
 		try {
 			RES.next();

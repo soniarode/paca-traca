@@ -65,20 +65,22 @@ public class Alert {
 		}
 	}
 
-	public void boundaryAlert() {
+	public String boundaryAlert() {
 		/*
 		 * Leaving the old code to make sure the new stuff works first String
 		 * response = outsideBoundary(alpaca.getLatitudeDecimalDegrees(),
 		 * alpaca.getLongitudeDecimalDegrees()); if (!response.equals("")) {
 		 * System.out.println("Alpaca out of bounds! " + response);
 		 */
+		String alertString;
 		if (!OutsideBoundary(alpaca.getLatitudeDecimalDegrees(),
 				alpaca.getLongitudeDecimalDegrees())) {
-			System.out.println("Alpaca " + alpaca.getSensorID()
-					+ " out of bounds!");
+			alertString = "Alpaca " + alpaca.getSensorID()
+					+ " out of bounds!";
 		} else
-			System.out.println("Alpaca " + alpaca.getSensorID()
-					+ " is still Ok!");
+			alertString = "Alpaca " + alpaca.getSensorID()
+					+ " is still Ok!";
+		return alertString;
 	}
 
 	public String temperatureAlert() {
