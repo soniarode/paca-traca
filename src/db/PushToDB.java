@@ -37,21 +37,21 @@ public class PushToDB {
 		try{
 			PreparedStatement pstmt = Sensor_CON.prepareStatement("INSERT INTO `Paca-Traca`.`Sensor_Data` " +
 					"(`sensor_ID`,`Latitude`,`Longitude`,`Altitude`,`Temperature`,`Pitch`,`Roll`,`Speed`,`Course`,`GPSFix`,`Number_Satellites`,`CompassHeading`,`SignalQuality`)"+
-					"VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+					"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			try{
-				//pstmt.setInt(1, 0);
-				pstmt.setFloat(1, 0);
+				pstmt.setInt(1, java.sql.Types.INTEGER);
 				pstmt.setFloat(2, 0);
 				pstmt.setFloat(3, 0);
 				pstmt.setFloat(4, 0);
 				pstmt.setFloat(5, 0);
 				pstmt.setFloat(6, 0);
-				pstmt.setInt(7, 0);
+				pstmt.setFloat(7, 0);
 				pstmt.setInt(8, 0);
-				pstmt.setBoolean(9, false);
-				pstmt.setInt(10, 0);
-				pstmt.setFloat(11, 0);
-				pstmt.setInt(12, 0);
+				pstmt.setInt(9, 0);
+				pstmt.setBoolean(10, false);
+				pstmt.setInt(11, 0);
+				pstmt.setFloat(12, 0);
+				pstmt.setInt(13, 0);
 				try{
 					pstmt.executeUpdate();
 				}catch (Exception e){
