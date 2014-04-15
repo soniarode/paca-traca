@@ -10,12 +10,11 @@ import javax.swing.SwingUtilities;
 import db.PushToDB.*;
 import simulator.PacaTraca;
 
-public class UIUpdater implements Runnable{
+public class UIUpdater implements Runnable {
 
 	Map<String, PacaTraca> sensors;
 	Map<String, Alert> alerts;
 	DataUI ui;
-	
 
 	public UIUpdater(DataUI ui, Map<String, PacaTraca> tracas,
 			Map<String, Alert> alerts){
@@ -53,20 +52,22 @@ public class UIUpdater implements Runnable{
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
+			// Messing with the alert stuff
+			// updateAlert(curSensor.getAltitude(),
+			// curSensor.getLatitudeDecimalDegrees(),
+			// curSensor.getLongitudeDecimalDegrees());
 			
 			//Trying to test pushing sensor data to the database.
 			if (counter % 5 == 0)
 			{
 				// Still a work in progess
-				//DB.push_data_to_DB(curSensor);
+				// DB.push_data_to_DB(curSensor);
 			}
 			counter++;
-			
+
 		}
-		//Was testing DB communication
-		//ui.DisplayDataInUI();
+		// Was testing DB communication
+		// ui.DisplayDataInUI();
 	}
-
-
 
 }
