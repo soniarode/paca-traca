@@ -109,7 +109,7 @@ public class Alert {
 		float diffLat = Math.abs(curLat - prevLat);
 		float diffLon = Math.abs(curLon - prevLat);
 		float diffAlt = Math.abs(curAlt - prevAlt);
-		if (diffLat < 0.00001 && diffLon < 0.00001 && diffAlt > 0.001) {
+		if (diffLat < 0.00001 && diffLon < 0.00001 && diffAlt > 2) {
 			return "Alpaca moved too suddenly!";
 		}
 		return "Alpaca is fine!";
