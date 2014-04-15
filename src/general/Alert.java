@@ -6,6 +6,12 @@ public class Alert {
 
 	private PacaTraca alpaca;
 	private Settings settings;
+	private float curAlt;
+	private float curLat;
+	private float curLon;
+	private float prevAlt;
+	private float prevLat;
+	private float prevLon;
 
 	public Alert(PacaTraca alpaca, Settings settings) {
 		this.alpaca = alpaca;
@@ -96,21 +102,23 @@ public class Alert {
 		}
 		return s;
 	}
-	
+
 	public String downAlert() {
-		float curAlt = alpaca.getAltitude();
-		float curLat = alpaca.getLatitudeDecimalDegrees();
-		float curLon = alpaca.getLongitudeDecimalDegrees();
-		//float prevAlt = alpaca.getPreviousAltitude();
-		//float prevLat = alpaca.getPreviousLatitude();
-		//float prevLon = alpaca.getPreviousLongitude();
-		//float diffLat = Math.abs(curLat-prevLat);
-		//float diffLon = Math.abs(curLon-prevLat);
-		//float diffAlt = Math.abs(curAlt - prevAlt);
-		//if (diffLat < 0.00001 && diffLon < 0.00001 && diffAlt > 0.001){
-		//	return "Alpaca moved too suddenly!";
-		//}
+		float diffLat = Math.abs(curLat - prevLat);
+		float diffLon = Math.abs(curLon - prevLat);
+		float diffAlt = Math.abs(curAlt - prevAlt);
+		if (diffLat < 0.00001 && diffLon < 0.00001 && diffAlt > 0.001) {
+			return "Alpaca moved too suddenly!";
+		}
 		return "Alpaca is fine!";
 	}
 
+	public void updateAlert(float altIn, float latIn, float lonIn) {
+		prevAlt = curAlt;
+		prevLat = curLat;
+		prevLon = curLat;
+		curAlt = altIn;
+		curLat = latIn;
+		curLon = lonIn;
+	}
 }
