@@ -67,12 +67,23 @@ public class AlertTest {
 	}
 
 	@Test
-	public void testNormalTemperature() {
+	public void testNotDown() {
 		/*
-		 * Test that a normal temperature returns normal from test
+		 * Test that a normal altitude returns normal from test
 		 */
-		// Need to set temperature in-between 100.5f and 102.5f
-		assertTrue("Should return normal temperature",
-				alertTest.temperatureAlert() == "normal");
+		// Need to set current and previous altitude to the same
+		assertTrue("Should return normal",
+				alertTest.downAlert() == "Alpaca is fine!");
 	}
+
+	@Test
+	public void testDown() {
+		/*
+		 * Test that a abrupt change in altitude returns alert from test
+		 */
+		// Need to set current and previous altitude to differ > 0.001
+		assertTrue("Should return with a problem",
+				alertTest.downAlert() == "Alpaca moved too suddenly!");
+	}
+
 }
