@@ -347,7 +347,7 @@ public class DataUI implements ActionListener {
 					"VALUES (?,?,?,?,?,?,?,?,?)");
 		
 			try {
-					//pstmt.setInt(1,alpaca_ID);
+					pstmt.setInt(1,alpaca_ID);
 					pstmt.setString(2,name);
 					pstmt.setString(3,gender);
 					pstmt.setInt(4,children);
