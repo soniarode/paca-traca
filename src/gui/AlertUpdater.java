@@ -4,8 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
-import db.DataUI;
-
 /**
  * 
  * @author Sonia Rode

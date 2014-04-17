@@ -7,6 +7,12 @@ import java.util.Scanner;
 
 import simulator.*;
 
+/**
+ * @deprecated
+ * 
+ * The command-line UI. Deprecated; switched to GUI now. See gui.DataUI
+ *
+ */
 public class ConsoleUIMain {
 
 	private static final String indent = "   ";
@@ -50,7 +56,6 @@ public class ConsoleUIMain {
 					// (1,2),(3,4),(5,6)...,(6,3) with no whitespace!
 					String listOfPoints = console.next();
 					AlertUtils.processBoundaryInputs(listOfPoints, settings);
-					//settings.setBoundaries();
 				} 
 				else if (userInput.toLowerCase().equals("show-boundaries")){
 					float[] latitudeValues = settings.getLatArray();
@@ -60,10 +65,6 @@ public class ConsoleUIMain {
 						System.out.print("(" + latitudeValues[i] + ", " + longitudeValues[i] + ") ");
 					}
 					System.out.println();
-					//System.out.println("Max latitude: "+settings.getLatMax());
-					//System.out.println("Min latitude: "+settings.getLatMin());
-					//System.out.println("Max longitude: "+settings.getLonMax());
-					//set-System.out.println("Min longitude: "+settings.getLonMin());
 				}
 				else if (userInput.toLowerCase().equals("list-alpacas")){
 					System.out.println("Sensor IDs:");

@@ -1,15 +1,22 @@
 package general;
 
 import gui.AlertUpdater;
+import gui.DataUI;
+import gui.UIUpdater;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import simulator.PacaTraca;
 import simulator.PacaTracaFactory;
-import db.DataUI;
-import db.UIUpdater;
 
+/**
+ * 
+ * @author Sonia Rode
+ *
+ * Sets up the major objects in the system, and starts various threads.
+ * 
+ */
 public class PacaTracaSystemImpl implements PacaTracaSystem {
 	
 	HashMap<String, PacaTraca> pacaTracas;
@@ -18,6 +25,12 @@ public class PacaTracaSystemImpl implements PacaTracaSystem {
 	DataUI dataUI;
 	UIUpdater uiUpdater;
 	
+	/**
+	 * Starts up the GUI and the background threads.
+	 * 
+	 * @param alpacaFactory - factory for creating PacaTracas
+	 * @param numAlpacas - the number of alpacas to put in the system
+	 */
 	public PacaTracaSystemImpl(PacaTracaFactory alpacaFactory, int numAlpacas){
 		
 		// Create the requested number of PacaTracas
@@ -38,8 +51,11 @@ public class PacaTracaSystemImpl implements PacaTracaSystem {
 			pacaTracaAlerts.put(pacaID, new Alert(pacaTracaForKey, settings));
 		}
 		
+		// Create the GUI
 		dataUI = new DataUI(new ArrayList<String>(pacaTracas.keySet()), settings, 
 				pacaTracaAlerts.values());
+		
+		// Create threads to update the GUI with live sensor data and alerts
 		uiUpdater = new UIUpdater(dataUI, pacaTracas, pacaTracaAlerts);
 		Thread uiUpdateThread = new Thread(uiUpdater);
 		uiUpdateThread.start();

@@ -1,4 +1,4 @@
-package db;
+package gui;
 
 import general.Alert;
 
@@ -8,9 +8,13 @@ import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
-import db.PushToDB.*;
+import db.PushToDB;
 import simulator.PacaTraca;
 
+/**
+ * Run loop that continually updates the sensor data text fields in the GUI
+ * with the latest sensor data from the hardware.
+ */
 public class UIUpdater implements Runnable {
 
 	Map<String, PacaTraca> sensors;
@@ -34,7 +38,7 @@ public class UIUpdater implements Runnable {
 		while (true) {
 			String curSensorID = ui.getCurrentSensorID();
 			PacaTraca curSensor = sensors.get(curSensorID);
-			// Pull data from sensors and update gui with it
+			// Pull data from sensors and update GUI with it
 			try {
 				// Updating the GUI must be done on the Swing event dispatch
 				// thread
@@ -44,16 +48,16 @@ public class UIUpdater implements Runnable {
 					public void run() {
 						String curSensorID = ui.getCurrentSensorID();
 						PacaTraca curSensor = sensors.get(curSensorID);
-						ui.txt_ID.setText(curSensorID);
-						ui.txt_lat.setText(curSensor
+						ui.setIDText(curSensorID);
+						ui.setLatitudeText(curSensor
 								.getLatitudeDecimalDegrees().toString());
-						ui.txt_lon.setText(curSensor
+						ui.setLongitudeText(curSensor
 								.getLongitudeDecimalDegrees().toString());
-						ui.txt_speed.setText(curSensor.getSpeed().toString());
-						ui.txt_course.setText(curSensor.getCourse().toString());
-						ui.txt_temp.setText(curSensor.getTemperature()
+						ui.setSpeedText(curSensor.getSpeed().toString());
+						ui.setCourseText(curSensor.getCourse().toString());
+						ui.setTemperatureText(curSensor.getTemperature()
 								.toString());
-						ui.txt_altitude.setText(curSensor.getAltitude()
+						ui.setAltitudeText(curSensor.getAltitude()
 								.toString());
 					}
 

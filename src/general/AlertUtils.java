@@ -69,8 +69,12 @@ public class AlertUtils {
 			curAlert = alert.temperatureAlert();
 			if (isRealAlert(curAlert))
 				alertString.append(curAlert + "\n");
+			curAlert = alert.downAlert();
+			if (isRealAlert(curAlert))
+				alertString.append(curAlert + "\n");
 		}
 		return alertString.toString();
 	}
+
 
 }

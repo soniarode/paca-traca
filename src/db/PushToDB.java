@@ -10,7 +10,7 @@ public class PushToDB {
 	Connection Sensor_CON;
 	Statement STA;
 	
-	PushToDB(){
+	public PushToDB(){
 		Sensor_CON = ConnectToDB();
 	}
 	
