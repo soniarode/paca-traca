@@ -6,13 +6,14 @@ package gui;
  * @author kemal
  */
 import general.Alert;
+import general.ProfileManager;
 import general.Settings;
 import db.DBPanel;
 
 import javax.swing.*;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -25,13 +26,14 @@ public class DataUI{
 	DBPanel dbPanel;
 	AlertPanel alertPanel;
 	AlpacaSensorDataPanel sensorDataPanel;
+	ProfileManagerPanel profilePanel;
 
 	/**
 	 * Create the GUI window
 	 */
 	public DataUI(List<String> sensorIDs, Settings settings, 
-			Collection<Alert> alerts) {
-		CreateUI(sensorIDs, settings, alerts);
+			Map<String, Alert> alerts, ProfileManager profileManager) {
+		CreateUI(sensorIDs, settings, alerts, profileManager);
 	}
 
 	/**
@@ -45,19 +47,23 @@ public class DataUI{
 	/*
 	 * Sets up the window
 	 */
-	private void CreateUI(List<String> sensorIDs,
-			Settings settings, Collection<Alert> alerts) {
+	private void CreateUI(List<String> sensorIDs, Settings settings, 
+			Map<String, Alert> alerts, ProfileManager profileManager) {
 		MainWindow = new JFrame();
 		MainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Create JPanel for alpaca data
-		this.sensorDataPanel = new AlpacaSensorDataPanel(sensorIDs);
+		this.sensorDataPanel = new AlpacaSensorDataPanel(sensorIDs, alerts,
+				profileManager);
 		
 		// Create JPanel for DB stuff
 		this.dbPanel = new DBPanel();
 	
 		// Create JPanel for Alerts
-		this.alertPanel = new AlertPanel(settings, alerts);
+		this.alertPanel = new AlertPanel(settings, alerts.values());
+		
+		// Create JPanel for Profiles
+		this.profilePanel = new ProfileManagerPanel(profileManager);
 		
 		// Create a container panel for the sensor data and db buttons since
 		// both are on same tab
@@ -70,10 +76,11 @@ public class DataUI{
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.add("Alpaca Data", pacaPanel);
 		tabbedPane.add("Alerts", alertPanel);
+		tabbedPane.add("Profiles", profilePanel);
 		
 		MainWindow.getContentPane().add(tabbedPane);
 		MainWindow.pack();
-		MainWindow.setSize(840, 900);
+		MainWindow.setSize(850, 700);
 		
 		MainWindow.setVisible(true);
 	}

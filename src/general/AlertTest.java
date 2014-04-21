@@ -25,7 +25,7 @@ public class AlertTest {
 		settings.setLatArray(latitudes);
 		float[] longitudes = { -68.66f, -68.66f, -68.68f, -68.68f };
 		settings.setLonArray(longitudes);
-		alertTest = new Alert(alpaca, settings);
+		alertTest = new Alert(alpaca, settings, new ProfileManager().getDefaultProfile());
 	}
 
 	@Test

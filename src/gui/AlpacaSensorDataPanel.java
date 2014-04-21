@@ -1,9 +1,14 @@
 package gui;
 
+import general.Alert;
+import general.ProfileManager;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,49 +38,63 @@ public class AlpacaSensorDataPanel extends JPanel implements ActionListener{
 	JButton btn_First;
 	JButton btn_Last;
 	
+	SetProfilePanel profilePanel;
+	
+	
 	/**
 	 * Creates a new AlpacaSensorDataPanel
 	 * 
 	 * @param sensorIDs - the sensor ids of all the alpacas in the system
 	 */
-	public AlpacaSensorDataPanel(List<String> sensorIDs){
+	public AlpacaSensorDataPanel(List<String> sensorIDs, 
+			Map<String, Alert> pacaAlerts, ProfileManager profileManager){
+		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.sensorIDs = sensorIDs;
 		currentSensorIndex = 0;
 		createUITextFields();
-		add(new JLabel("Alpaca ID: "));
-		add(txt_ID);
-		add(new JLabel("Sensor ID: "));
-		add(txt_sensorID);
-		add(new JLabel("Name: "));
-		add(txt_name);
-		add(new JLabel("Age: "));
-		add(txt_age);
-		add(new JLabel("Gender: "));
-		add(txt_gender);
-		add(new JLabel("Latitude: "));
-		add(txt_lat);
-		add(new JLabel("Longitude: "));
-		add(txt_lon);
-		add(new JLabel("Speed: "));
-		add(txt_speed);
-		add(new JLabel("Heading: "));
-		add(txt_course);
-		add(new JLabel("Altitude: "));
-		add(txt_altitude);
-		add(new JLabel("Temperature: "));
-		add(txt_temp);
-		add(new JLabel("Pitch: "));
-		add(txt_pitch);
-		add(new JLabel("Roll: "));
-		add(txt_roll);
+		
+		JPanel sensorPanel = new JPanel();
+		sensorPanel.add(new JLabel("Alpaca ID: "));
+		sensorPanel.add(txt_ID);
+		sensorPanel.add(new JLabel("Sensor ID: "));
+		sensorPanel.add(txt_sensorID);
+		sensorPanel.add(new JLabel("Name: "));
+		sensorPanel.add(txt_name);
+		sensorPanel.add(new JLabel("Age: "));
+		sensorPanel.add(txt_age);
+		sensorPanel.add(new JLabel("Gender: "));
+		sensorPanel.add(txt_gender);
+		sensorPanel.add(new JLabel("Latitude: "));
+		sensorPanel.add(txt_lat);
+		sensorPanel.add(new JLabel("Longitude: "));
+		sensorPanel.add(txt_lon);
+		sensorPanel.add(new JLabel("Speed: "));
+		sensorPanel.add(txt_speed);
+		sensorPanel.add(new JLabel("Heading: "));
+		sensorPanel.add(txt_course);
+		sensorPanel.add(new JLabel("Altitude: "));
+		sensorPanel.add(txt_altitude);
+		sensorPanel.add(new JLabel("Temperature: "));
+		sensorPanel.add(txt_temp);
+		sensorPanel.add(new JLabel("Pitch: "));
+		sensorPanel.add(txt_pitch);
+		sensorPanel.add(new JLabel("Roll: "));
+		sensorPanel.add(txt_roll);
+		add(sensorPanel);
+		
+		JPanel controlPanel = new JPanel();
 		btn_Next = new JButton("Next");
 		btn_Prev = new JButton("Prev");
 		btn_First = new JButton("First");
 		btn_Last = new JButton("Last");
-		add(btn_First);
-		add(btn_Prev);
-		add(btn_Next);
-		add(btn_Last);
+		controlPanel.add(btn_First);
+		controlPanel.add(btn_Prev);
+		controlPanel.add(btn_Next);
+		controlPanel.add(btn_Last);
+		add(controlPanel);
+		
+		profilePanel = new SetProfilePanel(sensorIDs.get(0), pacaAlerts, profileManager);
+		add(profilePanel);
 		btn_Next.addActionListener(this);
 		btn_Prev.addActionListener(this);
 		btn_First.addActionListener(this);
@@ -136,6 +155,7 @@ public class AlpacaSensorDataPanel extends JPanel implements ActionListener{
 		} else {
 			currentSensorIndex++;
 		}
+		profilePanel.setCurrentPaca(sensorIDs.get(currentSensorIndex));
 	}
 
 	/**
@@ -148,6 +168,7 @@ public class AlpacaSensorDataPanel extends JPanel implements ActionListener{
 		} else {
 			currentSensorIndex--;
 		}
+		profilePanel.setCurrentPaca(sensorIDs.get(currentSensorIndex));
 	}
 
 	/**
@@ -156,6 +177,7 @@ public class AlpacaSensorDataPanel extends JPanel implements ActionListener{
 	 */
 	public void btn_First_Action() {
 		currentSensorIndex = 0;
+		profilePanel.setCurrentPaca(sensorIDs.get(currentSensorIndex));
 	}
 
 	/**
@@ -164,6 +186,7 @@ public class AlpacaSensorDataPanel extends JPanel implements ActionListener{
 	 */
 	public void btn_Last_Action() {
 		currentSensorIndex = sensorIDs.size() - 1;
+		profilePanel.setCurrentPaca(sensorIDs.get(currentSensorIndex));
 	}
 
 }

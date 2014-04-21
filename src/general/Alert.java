@@ -12,10 +12,12 @@ public class Alert {
 	private float prevAlt;
 	private float prevLat;
 	private float prevLon;
+	private Profile profile;
 
-	public Alert(PacaTraca alpaca, Settings settings) {
+	public Alert(PacaTraca alpaca, Settings settings, Profile profile) {
 		this.alpaca = alpaca;
 		this.settings = settings;
+		this.profile = profile;
 	}
 
 	public Boolean OutsideBoundary(float latCurrent, float lonCurrent) {
@@ -95,9 +97,9 @@ public class Alert {
 		 * an alert of whether the alpaca is too hot, too cold or just right.
 		 */
 		String s;
-		if (alpaca.getTemperature() > 102.5f) {
+		if (alpaca.getTemperature() > profile.getUpperTempBound()) {
 			s = ("Alpaca " + alpaca.getSensorID() + " temperature is too hot!");
-		} else if (alpaca.getTemperature() < 100.5f) {
+		} else if (alpaca.getTemperature() < profile.getLowerTempBound()) {
 			s = ("Alpaca " + alpaca.getSensorID() + " temperature is too cold!");
 		} else {
 			s = ("Alpaca " + alpaca.getSensorID() + " temperature is normal!");
@@ -122,5 +124,13 @@ public class Alert {
 		curAlt = altIn;
 		curLat = latIn;
 		curLon = lonIn;
+	}
+	
+	public void setProfile(Profile profile){
+		this.profile = profile;
+	}
+	
+	public Profile getProfile(){
+		return this.profile;
 	}
 }

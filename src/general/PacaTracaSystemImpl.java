@@ -24,6 +24,7 @@ public class PacaTracaSystemImpl implements PacaTracaSystem {
 	HashMap<String, Alert> pacaTracaAlerts;
 	DataUI dataUI;
 	UIUpdater uiUpdater;
+	ProfileManager profileManager;
 	
 	/**
 	 * Starts up the GUI and the background threads.
@@ -44,16 +45,20 @@ public class PacaTracaSystemImpl implements PacaTracaSystem {
 		settings = new SettingsImpl();	
 		settings.getBoundaries(); // Initializes the Settings object
 		
+		// Create the ProfileManager
+		profileManager = new ProfileManager();
+		
 		// Create an Alert object for each PacaTraca
 		pacaTracaAlerts = new HashMap<String, Alert>();
 		for (String pacaID : pacaTracas.keySet()){
 			PacaTraca pacaTracaForKey = pacaTracas.get(pacaID);
-			pacaTracaAlerts.put(pacaID, new Alert(pacaTracaForKey, settings));
+			pacaTracaAlerts.put(pacaID, new Alert(pacaTracaForKey, settings, 
+					profileManager.getDefaultProfile()));
 		}
 		
 		// Create the GUI
 		dataUI = new DataUI(new ArrayList<String>(pacaTracas.keySet()), settings, 
-				pacaTracaAlerts.values());
+				pacaTracaAlerts, profileManager);
 		
 		// Create threads to update the GUI with live sensor data and alerts
 		uiUpdater = new UIUpdater(dataUI, pacaTracas, pacaTracaAlerts);
