@@ -48,9 +48,6 @@ public class DataUI{
 	private void CreateUI(List<String> sensorIDs,
 			Settings settings, Collection<Alert> alerts) {
 		MainWindow = new JFrame();
-		BoxLayout windowLayout = new BoxLayout(MainWindow.getContentPane(), 
-				BoxLayout.Y_AXIS);
-		MainWindow.setLayout(windowLayout);
 		MainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Create JPanel for alpaca data
@@ -62,9 +59,19 @@ public class DataUI{
 		// Create JPanel for Alerts
 		this.alertPanel = new AlertPanel(settings, alerts);
 		
-		MainWindow.getContentPane().add(sensorDataPanel);
-		MainWindow.getContentPane().add(dbPanel);
-		MainWindow.getContentPane().add(alertPanel);
+		// Create a container panel for the sensor data and db buttons since
+		// both are on same tab
+		JPanel pacaPanel = new JPanel();
+		pacaPanel.setLayout(new BoxLayout(pacaPanel, BoxLayout.Y_AXIS));
+		pacaPanel.add(sensorDataPanel);
+		pacaPanel.add(dbPanel);
+		
+		// Create the tabbed pane
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.add("Alpaca Data", pacaPanel);
+		tabbedPane.add("Alerts", alertPanel);
+		
+		MainWindow.getContentPane().add(tabbedPane);
 		MainWindow.pack();
 		MainWindow.setSize(840, 900);
 		
