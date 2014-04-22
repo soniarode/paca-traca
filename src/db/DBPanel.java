@@ -37,6 +37,7 @@ public class DBPanel extends JPanel implements ActionListener{
 	JButton btn_Replay = new JButton("Replay Alpaca Data");
 	JFrame InsertWindow;
 	JPanel insertPanel = new JPanel();
+	JPanel replay = new JPanel();
 	
 	//Insert Labels
 	JLabel lbl_Alpaca_ID, lbl_Name, lbl_Gender, 
@@ -186,6 +187,10 @@ public class DBPanel extends JPanel implements ActionListener{
 		String sensor_id = JOptionPane.showInputDialog("Enter the sensor data you would like to replay?");
 		PullFromDB DB = new PullFromDB();
 		DB.pull_data_from_db(sensor_id);
+		JLabel test;
+		JTextField txt_test;
+		
+		
 	}
 
 	private int createInsertUI(){

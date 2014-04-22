@@ -38,12 +38,18 @@ public class PullFromDB {
 		/*
 		 * SELECT * FROM  `Sensor_Data` WHERE  `sensor_ID` =  'Fluffy6'
 		 */
+		String selectSQL = "SELECT * FROM Sensor_Data WHERE sensor_ID = ?";
 		try{
-			PreparedStatement pstmt = Sensor_CON.prepareStatement("SELECT * FROM `Paca-Traca`.Sensor_Data` WHERE `sensor_ID` = ?");
+			PreparedStatement pstmt = Sensor_CON.prepareStatement(selectSQL);
 					try{
 						pstmt.setString(1, sensor_id);
 						try{
 							rs = pstmt.executeQuery();
+							try{
+								pstmt.close();
+							}catch (Exception e){
+								System.out.println(e);
+							}
 						}catch(Exception e)
 						{
 							System.out.println(e);
