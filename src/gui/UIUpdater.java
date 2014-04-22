@@ -12,8 +12,8 @@ import db.PushToDB;
 import simulator.PacaTraca;
 
 /**
- * Run loop that continually updates the sensor data text fields in the GUI
- * with the latest sensor data from the hardware.
+ * Run loop that continually updates the sensor data text fields in the GUI with
+ * the latest sensor data from the hardware.
  */
 public class UIUpdater implements Runnable {
 
@@ -58,8 +58,8 @@ public class UIUpdater implements Runnable {
 						ui.setCourseText(curSensor.getCourse().toString());
 						ui.setTemperatureText(curSensor.getTemperature()
 								.toString());
-						ui.setAltitudeText(curSensor.getAltitude()
-								.toString());
+						ui.setAltitudeText(curSensor.getAltitude().toString());
+						ui.updateMapPanel(sensors.values());
 					}
 
 				});
@@ -70,16 +70,16 @@ public class UIUpdater implements Runnable {
 			}
 
 			// Messing with the alert stuff
-			for (Alert alert: alertObjects){
+			for (Alert alert : alertObjects) {
 				alert.updateAlert(curSensor.getAltitude(),
 						curSensor.getLatitudeDecimalDegrees(),
 						curSensor.getLongitudeDecimalDegrees());
 			}
 
-		 	// Trying to test pushing sensor data to the database.
+			// Trying to test pushing sensor data to the database.
 			if (counter % 5 == 0) {
-				//Still a work in progess
-				DB.push_data_to_DB(curSensor,counter);
+				// Still a work in progess
+				DB.push_data_to_DB(curSensor, counter);
 			}
 			counter++;
 
