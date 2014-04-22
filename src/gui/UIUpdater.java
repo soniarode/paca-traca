@@ -34,11 +34,12 @@ public class UIUpdater implements Runnable {
 
 	@Override
 	public void run() {
-		int counter = 0;
-		PushToDB DB = new PushToDB();
+
 		while (true) {
 			String curSensorID = ui.getCurrentSensorID();
 			PacaTraca curSensor = sensors.get(curSensorID);
+			int counter = 0;
+			PushToDB DB = new PushToDB();
 			// Pull data from sensors and update GUI with it
 			try {
 				// Updating the GUI must be done on the Swing event dispatch
