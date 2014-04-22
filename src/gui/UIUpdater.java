@@ -20,6 +20,7 @@ public class UIUpdater implements Runnable {
 	Map<String, PacaTraca> sensors;
 	Map<String, Alert> alerts;
 	DataUI ui;
+	MapPanel map;
 
 	Collection<Alert> alertObjects;
 

@@ -27,6 +27,7 @@ public class DataUI{
 	AlertPanel alertPanel;
 	AlpacaSensorDataPanel sensorDataPanel;
 	ProfileManagerPanel profilePanel;
+	MapPanel mapPanel;
 
 	/**
 	 * Create the GUI window
@@ -65,6 +66,9 @@ public class DataUI{
 		// Create JPanel for Profiles
 		this.profilePanel = new ProfileManagerPanel(profileManager);
 		
+		// Create JPanel for Map
+		this.mapPanel = new MapPanel(settings,sensorIDs);
+		
 		// Create a container panel for the sensor data and db buttons since
 		// both are on same tab
 		JPanel pacaPanel = new JPanel();
@@ -77,6 +81,7 @@ public class DataUI{
 		tabbedPane.add("Alpaca Data", pacaPanel);
 		tabbedPane.add("Alerts", alertPanel);
 		tabbedPane.add("Profiles", profilePanel);
+		tabbedPane.add("Map", mapPanel);
 		
 		MainWindow.getContentPane().add(tabbedPane);
 		MainWindow.pack();
