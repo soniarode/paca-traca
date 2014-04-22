@@ -1,5 +1,5 @@
 package db;
-
+import db.PullFromDB;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -34,6 +34,7 @@ public class DBPanel extends JPanel implements ActionListener{
 	ResultSet RES;
 	JButton btn_Insert = new JButton("Add New Alpaca");
 	JButton btn_Delete = new JButton("Remove Current Alpaca");
+	JButton btn_Replay = new JButton("Replay Alpaca Data");
 	JFrame InsertWindow;
 	JPanel insertPanel = new JPanel();
 	
@@ -55,6 +56,8 @@ public class DBPanel extends JPanel implements ActionListener{
 		SelectDataFromDB();
 		add(btn_Insert);
 		add(btn_Delete);
+		add(btn_Replay);
+		btn_Replay.addActionListener(this);
 		btn_Insert.addActionListener(this);
 		btn_Delete.addActionListener(this);
 	}
@@ -174,6 +177,16 @@ public class DBPanel extends JPanel implements ActionListener{
 		SelectDataFromDB();
 
 	}
+	public void btn_Replay_Action()
+	{
+		/*
+		 * This function prompts the user for an alpaca ID and then queries
+		 * the database for information about that alpaca.
+		 */
+		String sensor_id = JOptionPane.showInputDialog("Enter the sensor data you would like to replay?");
+		PullFromDB DB = new PullFromDB();
+		DB.pull_data_from_db(sensor_id);
+	}
 
 	private int createInsertUI(){
 		createUITextFieldsAdd();
@@ -238,6 +251,9 @@ public class DBPanel extends JPanel implements ActionListener{
 		}
 		if (what == btn_Delete){
 			btn_Delete_Action();
+		}
+		if (what == btn_Replay){
+			btn_Replay_Action();
 		}
 	}
 }

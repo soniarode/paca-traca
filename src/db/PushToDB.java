@@ -6,6 +6,10 @@ import simulator.PacaTraca;
 
 
 //This class pushes data to the DB
+/*
+ * Author Joshua Kostura
+ * Populates the DB with information based on the alpaca sensor data
+ */
 public class PushToDB {	
 	Connection Sensor_CON;
 	Statement STA;
