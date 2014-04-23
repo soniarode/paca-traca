@@ -1,5 +1,10 @@
 package db;
 import db.PullFromDB;
+
+
+
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -25,6 +30,13 @@ import javax.swing.JTextField;
  */
 public class DBPanel extends JPanel implements ActionListener{
 
+	class Point{
+		float lat, lon;
+		public Point(float lat, float lon){
+			this.lat = lat;
+			this.lon = lon;
+		}	
+	}
 	private static final long serialVersionUID = 1L;
 	
 	Connection CON;
@@ -37,7 +49,7 @@ public class DBPanel extends JPanel implements ActionListener{
 	JButton btn_Replay = new JButton("Replay Alpaca Data");
 	JFrame InsertWindow;
 	JPanel insertPanel = new JPanel();
-	JPanel replay = new JPanel();
+	
 	
 	//Insert Labels
 	JLabel lbl_Alpaca_ID, lbl_Name, lbl_Gender, 
@@ -245,6 +257,21 @@ public class DBPanel extends JPanel implements ActionListener{
 		txt_Age= new JTextField(10);
 		txt_Mother= new JTextField(10);
 		txt_Father= new JTextField(10);
+
+	}
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g); // Paint background
+
+		// Draw the box
+		g.setColor(Color.GRAY);
+		g.fillRect(200,50, 600,600);
+//		for (Point point : alpacaDots.values()) {
+//			g.setColor(Color.WHITE);
+//			g.fillOval((int) (point.lon - dotRadius),
+//					(int) (point.lat - dotRadius),
+//					(int) (2 * dotRadius), (int) (2 * dotRadius));
+//		}
+
 
 	}
 

@@ -88,6 +88,7 @@ public class MapPanel extends JPanel implements ActionListener {
 			g.fillOval((int) (point.lon - dotRadius),
 					(int) (point.lat - dotRadius),
 					(int) (2 * dotRadius), (int) (2 * dotRadius));
+			
 		}
 
 	}

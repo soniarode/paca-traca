@@ -76,14 +76,22 @@ public class DataUI {
 		JPanel pacaPanel = new JPanel();
 		pacaPanel.setLayout(new BoxLayout(pacaPanel, BoxLayout.Y_AXIS));
 		pacaPanel.add(sensorDataPanel);
-		pacaPanel.add(dbPanel);
+		/*
+		 * @josh: change the layout of the dbPanel so that the maps and 
+		 * buttons can be viewed correctly
+		 */
+		dbPanel.setLayout(new BoxLayout(dbPanel,BoxLayout.PAGE_AXIS));
 
 		// Create the tabbed pane
+		/*
+		 * @josh:made the database a tab so I can make a replay map
+		 */
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.add("Alpaca Data", pacaPanel);
 		tabbedPane.add("Alerts", alertPanel);
 		tabbedPane.add("Profiles", profilePanel);
 		tabbedPane.add("Map", mapPanel);
+		tabbedPane.add("Database",dbPanel);
 
 		MainWindow.getContentPane().add(tabbedPane);
 		MainWindow.pack();
