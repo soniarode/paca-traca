@@ -16,12 +16,13 @@ import javax.swing.JPanel;
 
 import simulator.PacaTraca;
 
-class Point{
+class Point {
 	float lat, lon;
-	public Point(float lat, float lon){
+
+	public Point(float lat, float lon) {
 		this.lat = lat;
 		this.lon = lon;
-	}	
+	}
 }
 
 /**
@@ -33,13 +34,13 @@ public class MapPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final int MAP_WIDTH = 600;
-	private static final int MAP_HEIGHT = 600;
+	private static final int MAP_WIDTH = 400;
+	private static final int MAP_HEIGHT = 400;
 
 	private static float LATMAX, LATMIN, LONMAX, LONMIN, WIDTH, WIDTH_RATIO,
 			HEIGHT, HEIGHT_RATIO;
-	Map<String, Point> alpacaDots;
 
+	Map<String, Point> alpacaDots;
 	List<String> sensorIDs;
 
 	// Alpaca Dot properties
@@ -63,11 +64,14 @@ public class MapPanel extends JPanel implements ActionListener {
 
 	}
 
+	// Update the locations of the AlpacaDots
 	public void update(Collection<PacaTraca> sensors) {
 		for (PacaTraca sensor : sensors) {
 			Point point = alpacaDots.get(sensor.getSensorID());
-			point.lat = (sensor.getLatitudeDecimalDegrees() - LATMIN) * (HEIGHT_RATIO);
-			point.lon = (sensor.getLongitudeDecimalDegrees() - LONMIN) * (WIDTH_RATIO);
+			point.lat = (sensor.getLatitudeDecimalDegrees() - LATMIN)
+					* (HEIGHT_RATIO);
+			point.lon = (sensor.getLongitudeDecimalDegrees() - LONMIN)
+					* (WIDTH_RATIO);
 		}
 
 		repaint();
@@ -86,9 +90,9 @@ public class MapPanel extends JPanel implements ActionListener {
 		for (Point point : alpacaDots.values()) {
 			g.setColor(Color.WHITE);
 			g.fillOval((int) (point.lon - dotRadius),
-					(int) (point.lat - dotRadius),
-					(int) (2 * dotRadius), (int) (2 * dotRadius));
-			
+					(int) (point.lat - dotRadius), (int) (2 * dotRadius),
+					(int) (2 * dotRadius));
+
 		}
 
 	}

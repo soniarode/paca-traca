@@ -76,11 +76,12 @@ public class DataUI {
 		JPanel pacaPanel = new JPanel();
 		pacaPanel.setLayout(new BoxLayout(pacaPanel, BoxLayout.Y_AXIS));
 		pacaPanel.add(sensorDataPanel);
+		pacaPanel.add(mapPanel);
 		/*
-		 * @josh: change the layout of the dbPanel so that the maps and 
-		 * buttons can be viewed correctly
+		 * @josh: change the layout of the dbPanel so that the maps and buttons
+		 * can be viewed correctly
 		 */
-		dbPanel.setLayout(new BoxLayout(dbPanel,BoxLayout.PAGE_AXIS));
+		dbPanel.setLayout(new BoxLayout(dbPanel, BoxLayout.PAGE_AXIS));
 
 		// Create the tabbed pane
 		/*
@@ -90,8 +91,12 @@ public class DataUI {
 		tabbedPane.add("Alpaca Data", pacaPanel);
 		tabbedPane.add("Alerts", alertPanel);
 		tabbedPane.add("Profiles", profilePanel);
-		tabbedPane.add("Map", mapPanel);
-		tabbedPane.add("Database",dbPanel);
+		/*
+		 * @Zack: Removed map from tab pane and included it in regular pane
+		 * sensor data pane 
+		 * tabbedPane.add("Map", mapPanel);
+		 */
+		tabbedPane.add("Database", dbPanel);
 
 		MainWindow.getContentPane().add(tabbedPane);
 		MainWindow.pack();
