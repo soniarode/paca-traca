@@ -108,8 +108,8 @@ public class DataUI {
 	/**
 	 * Refreshes the Alerts text area with the latest alerts.
 	 */
-	public void updateMapPanel(Collection<PacaTraca> tracas) {
-		mapPanel.update(tracas);
+	public void updateMapPanel(Collection<PacaTraca> tracas, String ID) {
+		mapPanel.update(tracas, ID);
 	}
 
 	/**

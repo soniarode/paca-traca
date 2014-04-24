@@ -60,7 +60,7 @@ public class UIUpdater implements Runnable {
 						ui.setTemperatureText(curSensor.getTemperature()
 								.toString());
 						ui.setAltitudeText(curSensor.getAltitude().toString());
-						ui.updateMapPanel(sensors.values());
+						ui.updateMapPanel(sensors.values(),curSensorID);
 					}
 
 				});

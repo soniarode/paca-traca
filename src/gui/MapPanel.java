@@ -18,10 +18,12 @@ import simulator.PacaTraca;
 
 class Point {
 	float lat, lon;
+	Boolean current;
 
-	public Point(float lat, float lon) {
+	public Point(float lat, float lon, Boolean current) {
 		this.lat = lat;
 		this.lon = lon;
+		this.current = current;
 	}
 }
 
@@ -50,7 +52,7 @@ public class MapPanel extends JPanel implements ActionListener {
 		this.sensorIDs = sensorIDs;
 		alpacaDots = new HashMap<String, Point>();
 		for (String sensorID : sensorIDs) {
-			alpacaDots.put(sensorID, new Point(LATMAX, LONMAX));
+			alpacaDots.put(sensorID, new Point(LATMAX, LONMAX, false));
 		}
 		this.setPreferredSize(new Dimension(MAP_WIDTH, MAP_HEIGHT));
 		LATMAX = 45.0008f;// settings.getLatMax();
@@ -65,13 +67,18 @@ public class MapPanel extends JPanel implements ActionListener {
 	}
 
 	// Update the locations of the AlpacaDots
-	public void update(Collection<PacaTraca> sensors) {
+	public void update(Collection<PacaTraca> sensors, String ID) {
 		for (PacaTraca sensor : sensors) {
 			Point point = alpacaDots.get(sensor.getSensorID());
 			point.lat = (sensor.getLatitudeDecimalDegrees() - LATMIN)
 					* (HEIGHT_RATIO);
 			point.lon = (sensor.getLongitudeDecimalDegrees() - LONMIN)
 					* (WIDTH_RATIO);
+			if (sensor.getSensorID() == ID) {
+				point.current = true;
+			} else {
+				point.current = false;
+			}
 		}
 
 		repaint();
@@ -88,7 +95,12 @@ public class MapPanel extends JPanel implements ActionListener {
 
 		// Draw the dot
 		for (Point point : alpacaDots.values()) {
-			g.setColor(Color.WHITE);
+			if (point.current == true) {
+				g.setColor(Color.BLUE);
+			} else {
+				g.setColor(Color.WHITE);
+			}
+
 			g.fillOval((int) (point.lon - dotRadius),
 					(int) (point.lat - dotRadius), (int) (2 * dotRadius),
 					(int) (2 * dotRadius));
