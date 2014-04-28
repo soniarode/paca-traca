@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import javax.swing.JPanel;
 
 import simulator.PacaTraca;
 
+// Create a class Point which we will use to draw the alpacas on the map
 class Point {
 	float lat, lon;
 	Boolean current;
@@ -24,6 +26,23 @@ class Point {
 		this.lat = lat;
 		this.lon = lon;
 		this.current = current;
+	}
+}
+
+// Create a class BoundaryLine for each of the boundary lines to be drawn
+class BoundaryLine {
+	float x1, x2, y1, y2;
+
+	public BoundaryLine(float x1, float y1, float x2, float y2) {
+		this.x1 = x1;
+		this.x2 = x2;
+		this.y1 = y1;
+		this.y2 = y2;
+	}
+
+	// Actually calls the paint method to put the lines in the map
+	public void paint(Graphics g) {
+		g.drawLine((int) this.x1, (int) this.y1, (int) this.x2, (int) this.y2);
 	}
 }
 
@@ -36,6 +55,7 @@ public class MapPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
+	// Change the size of the map here
 	private static final int MAP_WIDTH = 400;
 	private static final int MAP_HEIGHT = 400;
 
@@ -44,9 +64,10 @@ public class MapPanel extends JPanel implements ActionListener {
 
 	Map<String, Point> alpacaDots;
 	List<String> sensorIDs;
+	ArrayList<BoundaryLine> boundaries;
 
 	// Alpaca Dot properties
-	private float dotRadius = 5.0f; // Dot's radius
+	private float dotRadius = 4.0f; // Dot's radius
 
 	public MapPanel(Settings settings, List<String> sensorIDs) {
 		this.sensorIDs = sensorIDs;
@@ -59,11 +80,24 @@ public class MapPanel extends JPanel implements ActionListener {
 		LONMAX = 68.0008f;// settings.getLonMax();
 		LATMIN = 44.9992f;// settings.getLatMin();
 		LONMIN = 67.9992f;// settings.getLonMin();
-		WIDTH = (LONMAX - LONMIN);
-		HEIGHT = (LATMAX - LATMIN);
+		WIDTH = (LONMAX - LONMIN) + 0.00001f; // Added bit is to see the bounds
+		HEIGHT = (LATMAX - LATMIN) + 0.00001f; // Added bit is to see the bounds
 		WIDTH_RATIO = (MAP_WIDTH / WIDTH);
 		HEIGHT_RATIO = (MAP_HEIGHT / HEIGHT);
 
+		// Create boundary lines
+		boundaries = new ArrayList<BoundaryLine>();
+		float[] bounds = { (HEIGHT_RATIO * (LATMAX - LATMIN)),
+				(WIDTH_RATIO * (LONMAX - LONMIN)), (HEIGHT_RATIO * 0.00001f),
+				(WIDTH_RATIO * 0.00001f) };
+		this.boundaries.add(new BoundaryLine(bounds[0], bounds[1], bounds[0],
+				bounds[3]));
+		this.boundaries.add(new BoundaryLine(bounds[0], bounds[1], bounds[2],
+				bounds[1]));
+		this.boundaries.add(new BoundaryLine(bounds[2], bounds[1], bounds[2],
+				bounds[3]));
+		this.boundaries.add(new BoundaryLine(bounds[0], bounds[3], bounds[2],
+				bounds[3]));
 	}
 
 	// Update the locations of the AlpacaDots
@@ -97,14 +131,22 @@ public class MapPanel extends JPanel implements ActionListener {
 		for (Point point : alpacaDots.values()) {
 			if (point.current == true) {
 				g.setColor(Color.BLUE);
+				dotRadius = 6.0f;
 			} else {
 				g.setColor(Color.WHITE);
+				dotRadius = 5.0f;
 			}
 
 			g.fillOval((int) (point.lon - dotRadius),
 					(int) (point.lat - dotRadius), (int) (2 * dotRadius),
 					(int) (2 * dotRadius));
 
+		}
+
+		// Draw boundary lines
+		for (BoundaryLine line : boundaries) {
+			g.setColor(Color.RED);
+			line.paint(g);
 		}
 
 	}
