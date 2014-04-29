@@ -55,9 +55,12 @@ public class DataUI {
 		MainWindow = new JFrame();
 		MainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		// Create JPanel for Map
+		this.mapPanel = new MapPanel(settings, sensorIDs);
+				
 		// Create JPanel for alpaca data
 		this.sensorDataPanel = new AlpacaSensorDataPanel(sensorIDs, alerts,
-				profileManager);
+				profileManager, mapPanel);
 
 		// Create JPanel for DB stuff
 		this.dbPanel = new DBPanel();
@@ -68,15 +71,11 @@ public class DataUI {
 		// Create JPanel for Profiles
 		this.profilePanel = new ProfileManagerPanel(profileManager);
 
-		// Create JPanel for Map
-		this.mapPanel = new MapPanel(settings, sensorIDs);
-
-		// Create a container panel for the sensor data and db buttons since
-		// both are on same tab
+		// Create a container panel for the sensor data panel
 		JPanel pacaPanel = new JPanel();
 		pacaPanel.setLayout(new BoxLayout(pacaPanel, BoxLayout.Y_AXIS));
 		pacaPanel.add(sensorDataPanel);
-		pacaPanel.add(mapPanel);
+
 		/*
 		 * @josh: change the layout of the dbPanel so that the maps and buttons
 		 * can be viewed correctly
@@ -100,7 +99,7 @@ public class DataUI {
 
 		MainWindow.getContentPane().add(tabbedPane);
 		MainWindow.pack();
-		MainWindow.setSize(850, 700);
+		MainWindow.setSize(850, 1000);
 
 		MainWindow.setVisible(true);
 	}

@@ -47,7 +47,8 @@ public class AlpacaSensorDataPanel extends JPanel implements ActionListener{
 	 * @param sensorIDs - the sensor ids of all the alpacas in the system
 	 */
 	public AlpacaSensorDataPanel(List<String> sensorIDs, 
-			Map<String, Alert> pacaAlerts, ProfileManager profileManager){
+			Map<String, Alert> pacaAlerts, ProfileManager profileManager,
+			MapPanel map){
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.sensorIDs = sensorIDs;
 		currentSensorIndex = 0;
@@ -95,6 +96,9 @@ public class AlpacaSensorDataPanel extends JPanel implements ActionListener{
 		
 		profilePanel = new SetProfilePanel(sensorIDs.get(0), pacaAlerts, profileManager);
 		add(profilePanel);
+		JPanel mapContainer = new JPanel();
+		mapContainer.add(map);
+		add(mapContainer);
 		btn_Next.addActionListener(this);
 		btn_Prev.addActionListener(this);
 		btn_First.addActionListener(this);
