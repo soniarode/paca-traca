@@ -166,5 +166,19 @@ public class DataUI {
 	public void setAltitudeText(String alt) {
 		sensorDataPanel.txt_altitude.setText(alt);
 	}
+	
+	/**
+	 * Sets the alpaca pitch text field
+	 */
+	public void setPitchText(String pitch) {
+		sensorDataPanel.txt_pitch.setText(pitch);
+	}
+	
+	/**
+	 * Sets the alpaca roll text field
+	 */
+	public void setRollText(String roll) {
+		sensorDataPanel.txt_roll.setText(roll);
+	}
 
 }

@@ -116,7 +116,9 @@ public class EmulatedPacaTraca implements PacaTraca {
 			else // Q3
 				degreesToAdd = 180;
 		}
-		return positiveAngleDegrees + degreesToAdd;
+		if (!Float.isNaN(positiveAngleDegrees))
+			return positiveAngleDegrees + degreesToAdd;
+		return 0f;
 	}
 
 	@Override
@@ -149,20 +151,17 @@ public class EmulatedPacaTraca implements PacaTraca {
 
 	@Override
 	public Float getRoll() {
-		// TODO real implementation
-		return new Float(10.0);
+		return (float)motionSimulator.getRoll();
 	}
 
 	@Override
 	public Float getPitch() {
-		// TODO real implementation
-		return new Float(10.0);
+		return (float)motionSimulator.getPitch();
 	}
 
 	@Override
 	public Float getCompassHeading() {
-		// TODO real implementation
-		return new Float(10.0);
+		return getCourse();
 	}
 
 	@Override

@@ -19,10 +19,13 @@ public class MotionRunnable implements Runnable {
 	private static final double MIN_ALTITUDE_WHILE_GRAZING = 49.5;
 	private static final double MAX_ALTITUDE_WHILE_GRAZING = 50;
 	private static final double STANDARD_ALTITUDE = 50;
+	private static final double STANDARD_PITCH = 90;
+	private static final double STANDARD_ROLL = 0;
 
 	enum MotionEvent{
 		MOVE_NORMAL,
 		GRAZE,
+		FALL,
 		MOVE_FAR,
 		STAND_STILL,
 		LIE_STILL;	
@@ -37,7 +40,8 @@ public class MotionRunnable implements Runnable {
 	static {
 		eventProbabilities = new LinkedHashMap<MotionEvent, Double>();
 		eventProbabilities.put(MotionEvent.MOVE_NORMAL, 0.40);
-		eventProbabilities.put(MotionEvent.GRAZE, 0.40);
+		eventProbabilities.put(MotionEvent.GRAZE, 0.20);
+		eventProbabilities.put(MotionEvent.FALL, 0.20);
 		eventProbabilities.put(MotionEvent.MOVE_FAR, 0.05);
 		eventProbabilities.put(MotionEvent.STAND_STILL, 0.10);
 		eventProbabilities.put(MotionEvent.LIE_STILL, 0.05);
@@ -45,8 +49,9 @@ public class MotionRunnable implements Runnable {
 
 	private MotionEvent currentEvent;
 	private int countdownToNextEvent;
-	private double heading;
-	private double altitude;
+	private volatile double heading;
+	private volatile double altitude;
+	private volatile double pitch, roll;
 	private GrazeStatus grazeStatus;
 	private int stepUnitMultiplier;
 	private volatile double currentLatitude;
@@ -68,6 +73,8 @@ public class MotionRunnable implements Runnable {
 		currentLatitude = startLatitude;
 		currentLongitude = startLongitude;
 		altitude = STANDARD_ALTITUDE;
+		pitch = STANDARD_PITCH;
+		roll = STANDARD_ROLL;
 		this.random = random;
 	}
 
@@ -114,6 +121,9 @@ public class MotionRunnable implements Runnable {
 				break;
 			case GRAZE:
 				graze();
+				break;
+			case FALL:
+				fall();
 				break;
 			case MOVE_FAR:
 				move();
@@ -163,6 +173,14 @@ public class MotionRunnable implements Runnable {
 	public double getAltitude(){
 		return altitude;
 	}
+	
+	public double getPitch() {
+		return pitch;
+	}
+
+	public double getRoll() {
+		return roll;
+	}
 
 	/*
 	 *  Use event probabilities to randomly choose an event, and set variables
@@ -179,26 +197,36 @@ public class MotionRunnable implements Runnable {
 			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
 			heading = random.nextDouble() * Math.PI*2;
 			altitude = STANDARD_ALTITUDE;
+			pitch = STANDARD_PITCH;
 			stepUnitMultiplier = MathUtils.randomIntBetween(1, 10, random);
 			break;
 		case GRAZE:
 			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
 			altitude = STANDARD_ALTITUDE;
+			pitch = STANDARD_PITCH;
 			grazeStatus = GrazeStatus.LOWERING_HEAD;
 			break;
+		case FALL:
+			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
+			altitude = STANDARD_ALTITUDE;
+			pitch = STANDARD_PITCH;
+			roll = MathUtils.randomIntBetween(0, 180, random);
 		case MOVE_FAR:
 			countdownToNextEvent = MathUtils.randomIntBetween(20, 100, random);
 			heading = random.nextDouble() * Math.PI*2;
 			altitude = STANDARD_ALTITUDE;
+			pitch = STANDARD_PITCH;
 			stepUnitMultiplier = MathUtils.randomIntBetween(1, 10, random);
 			break;
 		case STAND_STILL:
 			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
 			altitude = STANDARD_ALTITUDE;
+			pitch = STANDARD_PITCH;
 			break;
 		case LIE_STILL:
 			countdownToNextEvent = MathUtils.randomIntBetween(1, 20, random);
 			altitude = STANDARD_ALTITUDE - 3;
+			pitch = MathUtils.randomIntBetween(-10, 10, random);
 			break;
 		}
 		return chosenEvent;
@@ -218,7 +246,7 @@ public class MotionRunnable implements Runnable {
 	}
 
 	/*
-	 * Changes the alpaca's altitude reading in an up and down motion
+	 * Changes the alpaca's altitude and pitch reading in an up and down motion
 	 * meant to mimic grazing
 	 */
 	private void graze(){
@@ -230,13 +258,27 @@ public class MotionRunnable implements Runnable {
 			grazeStatus = GrazeStatus.LOWERING_HEAD;
 		}
 
-		// Change the altitude reading accordingly
+		// Change the altitude and pitch reading accordingly
 		if (grazeStatus == GrazeStatus.LOWERING_HEAD){
 			altitude -= 0.1;
+			pitch -= 36;
 		}
 		else {
 			altitude += 0.1;
+			pitch += 36;
 		}
+	}
+	
+	/*
+	 * Changes the alpaca's altitude and pitch reading to mimic falling
+	 */
+	private void fall(){
+		if (altitude > MIN_ALTITUDE_WHILE_GRAZING){
+			// falling motion
+			altitude -= 0.1;
+			pitch -= 10;	
+		}
+		roll = roll < 180? roll + 10 : roll - MathUtils.randomIntBetween(10, 50, random);
 	}
 
 }

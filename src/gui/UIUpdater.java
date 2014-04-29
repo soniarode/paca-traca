@@ -61,6 +61,8 @@ public class UIUpdater implements Runnable {
 						ui.setTemperatureText(curSensor.getTemperature()
 								.toString());
 						ui.setAltitudeText(curSensor.getAltitude().toString());
+						ui.setPitchText(curSensor.getPitch().toString());
+						ui.setRollText(curSensor.getRoll().toString());
 						ui.updateMapPanel(sensors.values(),curSensorID);
 					}
 
