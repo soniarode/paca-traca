@@ -83,9 +83,7 @@ public class DBPanel extends JPanel implements ActionListener{
 		try {
 			// Try loading the mysql driver
 			Class.forName("com.mysql.jdbc.Driver");
-			// Create connection to DB, username and password stored in plain
-			// here
-			// eventually we will make a config file
+			// Connect to the DB
 			CON = DriverManager.getConnection("jdbc:mysql://130.111.197.96/Paca-Traca", "remote",
 					"pass");
 			Insert_CON = DriverManager.getConnection("jdbc:mysql://130.111.197.96/Paca-Traca","remote","pass");
@@ -132,7 +130,9 @@ public class DBPanel extends JPanel implements ActionListener{
 			mother = txt_Mother.getText();
 			father = txt_Father.getText();
 		}
-		//Functionality I was working on to add a alpaca to the DB, communication with DB is working 
+		/*
+		 * Adds alpaca's to the DB based on user entered information
+		 */
 
 		try{
 			PreparedStatement pstmt = Insert_CON.prepareStatement("INSERT INTO `Paca-Traca`.`Alpaca_Data` (`Alpaca_ID`, `Name`, `Gender`,  `Children`, `Weight`, `Height`, `Age`, `Mother`, `Father`)" +	
@@ -169,7 +169,9 @@ public class DBPanel extends JPanel implements ActionListener{
 	}
 
 	public void btn_Delete_Action(){
-
+		/*
+		 * Deletes alpaca based on their ID number
+		 */
 		int delete_id = Integer.parseInt(JOptionPane.showInputDialog("Insert the ID number of the alpaca to delete?"));
 
 		try {
@@ -195,6 +197,9 @@ public class DBPanel extends JPanel implements ActionListener{
 		/*
 		 * This function prompts the user for an alpaca ID and then queries
 		 * the database for information about that alpaca.
+		 * 
+		 * This incomplete.
+		 * @todo
 		 */
 		String sensor_id = JOptionPane.showInputDialog("Enter the sensor data you would like to replay?");
 		PullFromDB DB = new PullFromDB();
@@ -265,13 +270,6 @@ public class DBPanel extends JPanel implements ActionListener{
 		// Draw the box
 		g.setColor(Color.GRAY);
 		g.fillRect(200,50, 600,600);
-//		for (Point point : alpacaDots.values()) {
-//			g.setColor(Color.WHITE);
-//			g.fillOval((int) (point.lon - dotRadius),
-//					(int) (point.lat - dotRadius),
-//					(int) (2 * dotRadius), (int) (2 * dotRadius));
-//		}
-
 
 	}
 
