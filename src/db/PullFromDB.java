@@ -1,5 +1,8 @@
 
 package db;
+import general.Settings;
+
+import java.awt.List;
 import java.sql.*;
 
 /*
@@ -32,6 +35,38 @@ public class PullFromDB {
 				System.out.println(ex);
 		}
 		return Sensor_CON;
+	}
+	/*
+	 * Gets the boundaries and prints them to the terminal
+	 */
+	public void getBoundaryData(Settings settings)
+	{
+		float latArray[] = null;
+		float lonArray[] = null;
+		try{
+			PreparedStatement pstmt = Sensor_CON.prepareStatement("SELECT * FROM `Paca-Traca`.`Boundaries`");
+			rs = pstmt.executeQuery();
+			System.out.println("Longitude:" + "\t" + "Latiude:");
+			while (rs.next()){
+				/* These where test cases
+				 * to see if the query was working
+				float lon = rs.getFloat("Longitude");
+				float lat = rs.getFloat("Latitude");
+				System.out.println(lon + "\t\t"+ lat);
+				*/
+				int index = rs.getInt("Index");
+				float lon = rs.getFloat("Longitude");
+				float lat = rs.getFloat("Latitude");
+				latArray[index] = lat;
+				lonArray[index] = lon;
+				
+			}
+			settings.setLatArray(latArray);
+			settings.setLonArray(lonArray);
+
+		}catch(Exception e){
+			System.out.println(e);
+		}
 	}
 	public void pull_data_from_db(String sensor_id)
 	{

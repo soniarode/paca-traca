@@ -1,4 +1,6 @@
 package db;
+import general.Settings;
+
 import java.sql.*;
 
 import simulator.PacaTraca;
@@ -12,7 +14,6 @@ import simulator.PacaTraca;
  */
 public class PushToDB {	
 	Connection Sensor_CON;
-	Statement STA;
 	
 	public PushToDB(){
 		Sensor_CON = ConnectToDB();
@@ -24,9 +25,6 @@ public class PushToDB {
 		try {
 			// Try loading the mysql driver
 			Class.forName("com.mysql.jdbc.Driver");	
-			// 	Create connection to DB, username and password stored in plain
-			// 	here
-			// eventually we will make a config file
 			Sensor_CON = DriverManager.getConnection("jdbc:mysql://130.111.197.96/Paca-Traca", "remote",
 					"pass");
 			} catch (Exception ex) {
@@ -34,7 +32,10 @@ public class PushToDB {
 		}
 		return Sensor_CON;
 	}
-	public void push_data_to_DB(PacaTraca curSensor,int index)
+	/* 
+	 *  This function pushes sensor data to the DB
+	 */
+	public void pushSensorData(PacaTraca curSensor,int index)
 	{
 
 		
@@ -62,11 +63,6 @@ public class PushToDB {
 				}catch (Exception e){
 					System.out.println(e);
 				}
-//				try{
-//					Sensor_CON.close();
-//				}catch (Exception e){
-//					System.out.println(e);
-//				}
 			}catch(Exception e){
 				System.out.println(e);
 				
@@ -75,4 +71,28 @@ public class PushToDB {
 			System.out.println(e);
 		}
 	}
+	/*
+	 * Pushes the boundaries to the DB
+	 */
+	public void pushBoundaryData(float lon,float  lat)
+	{
+		// INSERT INTO `Paca-Traca`.`Boundaries`(`Index`,`Longitude`,`Latitude`)VALUES(NULL,?,?)
+		try{
+			PreparedStatement pstmt = Sensor_CON.prepareStatement("INSERT INTO `Paca-Traca`.`Boundaries`(`Index`, `Longitude`,`Latitude`)VALUES(NULL,?,?)");
+			try{
+				pstmt.setFloat(1,lon);
+				pstmt.setFloat(2,lat);
+				try{
+					pstmt.executeUpdate();
+				}catch(Exception e){
+					System.out.println(e);
+				}
+			}catch(Exception e){
+				System.out.println(e);
+			}
+		}catch(Exception e){
+			System.out.println(e);
+		}
+	}
+
 }
