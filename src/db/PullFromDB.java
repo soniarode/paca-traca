@@ -46,14 +46,7 @@ public class PullFromDB {
 		try{
 			PreparedStatement pstmt = Sensor_CON.prepareStatement("SELECT * FROM `Paca-Traca`.`Boundaries`");
 			rs = pstmt.executeQuery();
-			System.out.println("Longitude:" + "\t" + "Latiude:");
 			while (rs.next()){
-				/* These where test cases
-				 * to see if the query was working
-				float lon = rs.getFloat("Longitude");
-				float lat = rs.getFloat("Latitude");
-				System.out.println(lon + "\t\t"+ lat);
-				*/
 				int index = rs.getInt("Index");
 				float lon = rs.getFloat("Longitude");
 				float lat = rs.getFloat("Latitude");

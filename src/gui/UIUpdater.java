@@ -92,11 +92,8 @@ public class UIUpdater implements Runnable {
 				DB.pushSensorData(sensor,counter);
 				counter++;
 			}
-			/*
-			 * @josh: This was designed to test the 
-			 */
-			Settings settings = null;
-			PDB.getBoundaryData(settings);
+
+
 
 		}
 
