@@ -16,7 +16,9 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import simulator.PacaTraca;
-
+/*
+ * @author Zachery Schiller
+ */
 // Create a class Point which we will use to draw the alpacas on the map
 class Point {
 	float lat, lon;
