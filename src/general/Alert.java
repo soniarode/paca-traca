@@ -2,6 +2,13 @@ package general;
 
 import simulator.PacaTraca;
 
+/**
+ * 
+ * @authors Zack Schiller, Josh Kostura & Sonia Rode
+ * 
+ *          Alert class for boundary, temperature, down, and profile alerts
+ * 
+ */
 public class Alert {
 
 	private PacaTraca alpaca;
@@ -83,11 +90,9 @@ public class Alert {
 		String alertString;
 		if (!OutsideBoundary(alpaca.getLatitudeDecimalDegrees(),
 				alpaca.getLongitudeDecimalDegrees())) {
-			alertString = "Alpaca " + alpaca.getSensorID()
-					+ " out of bounds!";
+			alertString = "Alpaca " + alpaca.getSensorID() + " out of bounds!";
 		} else
-			alertString = "Alpaca " + alpaca.getSensorID()
-					+ " is still Ok!";
+			alertString = "Alpaca " + alpaca.getSensorID() + " is still Ok!";
 		return alertString;
 	}
 
@@ -125,12 +130,12 @@ public class Alert {
 		curLat = latIn;
 		curLon = lonIn;
 	}
-	
-	public void setProfile(Profile profile){
+
+	public void setProfile(Profile profile) {
 		this.profile = profile;
 	}
-	
-	public Profile getProfile(){
+
+	public Profile getProfile() {
 		return this.profile;
 	}
 }

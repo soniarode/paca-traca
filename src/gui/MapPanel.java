@@ -16,8 +16,15 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import simulator.PacaTraca;
-/*
- * @author Zachery Schiller
+
+/**
+ * 
+ * @author Zack Schiller
+ * 
+ *         Map panel for displaying the map of the alpacas. Updates with their
+ *         current locations and other sensor data. Current alpaca is colored
+ *         differently to show where it is.
+ * 
  */
 // Create a class Point which we will use to draw the alpacas on the map
 class Point {

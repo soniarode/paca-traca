@@ -2,15 +2,25 @@ package general;
 
 import java.io.*;
 
-public class SettingsImpl implements Settings{
+/**
+ * 
+ * @authors Zack Schiller, Josh Kostura & Sonia Rode
+ * 
+ *          Settings class to store and get information for the alpaca sensor
+ *          data and boundaries. Now most of this is pulled from the database.
+ * 
+ */
+public class SettingsImpl implements Settings {
 
 	// Boundaries in Latitude and longitude Maximum and Minimum
 	private float latMax, latMin, lonMax, lonMin;
-	// These are just temp values use for simple test, they should be stored and update from the settings file.
-	private float latArray[] = {0,5,5,0};
-	private float lonArray[] = {0,0,5,5};
+	// These are just temp values use for simple test, they should be
+	// stored and update from the settings file.
+	private float latArray[] = { 0, 5, 5, 0 };
+	private float lonArray[] = { 0, 0, 5, 5 };
 	private int Number_of_Corners = 4;
-	public SettingsImpl(){
+
+	public SettingsImpl() {
 
 	}
 
@@ -45,7 +55,7 @@ public class SettingsImpl implements Settings{
 	}
 
 	// Set the boundaries from user input and save to file
-	public void setBoundaries(){
+	public void setBoundaries() {
 		try {
 			// Get input from user for max and min lat and lon
 			BufferedReader bufferedReader = new BufferedReader(
@@ -120,6 +130,7 @@ public class SettingsImpl implements Settings{
 	public float[] getLonArray() {
 		return lonArray;
 	}
+
 	public int getNumCorners() {
 		return Number_of_Corners;
 	}
